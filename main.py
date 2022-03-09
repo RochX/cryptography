@@ -24,8 +24,29 @@ import sys
  
 class CTF:
     def __init__(self):
-        pass
-    
+        self.candidates = {"Captain Blackbeard": [], "Miss Fortune": [] }
+        self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
+
+    def vote(self,candidate,id):
+        if int(id) in CTF.ids:
+            for key in self.candidates:
+                if id in self.candidates[key]:
+                    print("You already voted.")
+                    return
+            for key in self.candidates:
+                if key == candidate:
+                    self.candidates[key].append(id)
+        elif len(CTF.ids) == 0:
+            print("Voting period has not begun yet.\n")
+        else:
+            print("You did not register in time.\n")
+        
+
+    def tally(self):
+        print("\nVote Tally\n-----------")
+        for key in self.candidates:
+            print(key + ": " + str(len(self.candidates[key])))
+
 # Class meant to represent the CLA and the functions it may need
 class CLA:
     def __init__(self):
@@ -70,6 +91,8 @@ class CLA:
                 self.auth_dict[row[0]][0] = row[1]
                 self.auth_dict[row[0]][1] = row[2]
                 self.auth_dict[row[0]][2] = int(row[3])
+                if int(row[3]) != -1:
+                    self.ids[int(row[3])] = True
 
     # Function to save any CLA updates. One boolean parameter to determine if user data is being reset.
     def saveVoters(self,reset):
@@ -86,6 +109,7 @@ class CLA:
             for item in self.auth_dict:
                 rows.append( [item,self.auth_dict[item][0],self.auth_dict[item][1],"-1"] )
                 self.auth_dict[item][2] = -1
+                self.ids = {}
         else:
             for item in self.auth_dict:
                 rows.append( [item,self.auth_dict[item][0],self.auth_dict[item][1],self.auth_dict[item][2]] )
@@ -104,27 +128,55 @@ class CLA:
             # writing the data rows 
             csvwriter.writerows(rows)
 
+    def sendIDs(self,CTF):
+        CTF.ids = self.ids
+
 if __name__ == '__main__':
     
     # First Time Setup at program start
     CLA = CLA()
-    print("Welcome to the Virtual Voting Booth!")
+    CTF = CTF()
+    print("Welcome to the Virtual Voting Booth!\n")
     running = True
     
     # Interactable user loop.
     while (running):
-        menuChoice = input("Please type the number associated with the action below.\n1. Register to Vote\n2. Vote for a Candidate\n3. Reset Voting Pool\n4. Quit\n")
+        menuChoice = input("Please type the number associated with the action below.\n1. Register to Vote\n2. Vote for a Candidate\n3. Reset Voting Pool\n4. CLA sends the ID list to CTF\n5. CTF Tallies Votes\n6. Quit\n")
 
         if (menuChoice == '1'):
             CLA.validate()
             print("You're Registered!\n")
         elif (menuChoice == '2'):
-            print("You've Voted!\n")
+            for key in CTF.candidates:
+                print(key)
+            voteChoice = input("Please type the name exactly as above that you would like to vote for.\n")
+            if voteChoice in CTF.candidates:
+                ID = input("Please type your verification ID.\n")
+                CTF.vote(voteChoice,int(ID))
+            else:
+                print(voteChoice + " is not on the ballot.\n")
         elif (menuChoice == '3'):
             CLA.saveVoters(True)
-            print("Voting Data Reset")
+            print("Voting Data Reset\n")
         elif (menuChoice == '4'):
+            CLA.sendIDs(CTF)
+            print("ID list sent\n")
+        elif (menuChoice == '5'):
+            CTF.tally()
+        elif (menuChoice == '6'):
             print("Program Terminating\n")
             running = False
+        elif (menuChoice == 'Print CTF ids'):
+            print(CTF.ids)
+            print(" ")
+        elif (menuChoice == 'Print CTF candidates'):
+            print(CTF.candidates)
+            print(" ")
+        elif (menuChoice == 'Print CLA ids'):
+            print(CLA.ids)
+            print(" ")
+        elif (menuChoice == 'Print CLA auth_dict'):
+            print(CLA.auth_dict)
+            print(" ")
         else:
-            print(menuChoice + " is not a viable option. Please select an option from the list.")
+            print(menuChoice + " is not a viable option. Please select an option from the list.\n")
