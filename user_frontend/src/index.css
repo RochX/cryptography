@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Krona+One');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;600&display=swap');
+
+:root{
+  --dark-blue: #242333;
+  --white: #ffffff;
+  --light-blue: #01b0d3;
+  --light-blue-lighter: #01b0d38b;
+  --light-blue-darker: #04859E;
+  --selected: #29ab87;
+  --error: #8d021f;
+}
+
+::selection{
+  background-color: var(--light-blue-lighter);
+}
+
+body, p, h1, h2{
+  margin: 0;
+  padding: 0;
+}
