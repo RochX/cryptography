@@ -6,14 +6,16 @@
   --white: #ffffff;
   --light-blue: #01b0d3;
   --light-blue-lighter: #01b0d38b;
-  --light-blue-darker: #04859E
+  --light-blue-darker: #04859E;
+  --selected: #29ab87;
+  --error: #8d021f;
 }
 
 ::selection{
   background-color: var(--light-blue-lighter);
 }
 
-body, p, h1{
+body, p, h1, h2{
   margin: 0;
   padding: 0;
 }
