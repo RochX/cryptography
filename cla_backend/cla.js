@@ -4,7 +4,7 @@ const {spawn} = require('child_process');
 const app = express();
 app.use(cors());
 
-const port = 4000
+const port = 3000
 
 app.get('/', (req, res) => {
  

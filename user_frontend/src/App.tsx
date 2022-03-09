@@ -21,7 +21,7 @@ function App() {
 
   async function handleRegisterButton(){
     if (firstName !== "" && lastName !== "" && SSN !== ""){
-     fetch('http://localhost:4000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
+     fetch('http://localhost:3000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
        .then(response => response.json())
        .then((response) => {
           setCard1Message(response.output);

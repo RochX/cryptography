@@ -26,6 +26,7 @@ class CTF:
     def __init__(self):
         self.candidates = {"Captain Blackbeard": [], "Miss Fortune": [] }
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
+        self.loadTally()
 
     def vote(self,candidate,id):
         if int(id) in CTF.ids:
@@ -36,6 +37,7 @@ class CTF:
             for key in self.candidates:
                 if key == candidate:
                     self.candidates[key].append(id)
+                    self.saveVoteTally(False)
         elif len(CTF.ids) == 0:
             print("Voting period has not begun yet.\n")
         else:
@@ -46,6 +48,52 @@ class CTF:
         for key in self.candidates:
             print(key + ": " + str(len(self.candidates[key])))
 
+    def loadTally(self):
+        self.candidates = {}
+        #read csv, and split on "," the line
+        csv_file = csv.reader(open('tally.csv', "r"), delimiter=",")
+
+        #loop through the csv list
+        for row in csv_file:
+            first = True
+            key = "name"
+            for item in row:
+                if first:
+                    self.candidates[item] = []
+                    first = False
+                    key = item
+                else:
+                    self.candidates[key].append(int(item))
+
+    # Function to save any CTF updates.
+    def saveVoteTally(self,reset):
+        #read csv, and split on "," the line
+        csv_file = csv.reader(open('tally.csv', "r"), delimiter=",")
+
+        # data rows of csv file 
+        rows = []
+
+        if reset:
+            rows.append(['Captain Blackbeard'])
+            rows.append(['Miss Fortune'])
+        else:
+            for key in self.candidates:
+                candidateData = []
+                candidateData.append(key)
+                for item in self.candidates[key]:
+                    candidateData.append(item)
+                rows.append(candidateData)
+
+        # name of csv file 
+        filename = "tally.csv"
+    
+        # writing to csv file 
+        with open(filename, 'w', newline='') as csvfile:
+            # creating a csv writer object 
+            csvwriter = csv.writer(csvfile) 
+
+            # writing the data rows 
+            csvwriter.writerows(rows)
 
 # Class meant to represent the CLA and the functions it may need
 class CLA:
@@ -153,10 +201,12 @@ if __name__ == '__main__':
             if voteChoice in CTF.candidates:
                 ID = input("Please type your verification ID.\n")
                 CTF.vote(voteChoice,int(ID))
+                print("You Voted!")
             else:
                 print(voteChoice + " is not on the ballot.\n")
         elif (menuChoice == '3'):
             CLA.saveVoters(True)
+            CTF.saveVoteTally(True)
             print("Voting Data Reset\n")
         elif (menuChoice == '4'):
             CLA.sendIDs(CTF)
