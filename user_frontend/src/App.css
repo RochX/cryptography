@@ -199,3 +199,8 @@
   padding-left: 50px;
   color: var(--selected);
 }
+
+.Card-MessageButton{
+  width: fit-content !important;
+  background-color: var(--selected) !important;
+}

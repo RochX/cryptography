@@ -19,8 +19,21 @@ function App() {
   const [card1Message, setCard1Message] = React.useState("");
   const [card2Message, setCard2Message] = React.useState("");
 
-  function handleRegisterButton(){
-    alert(firstName + " " +lastName + " " + SSN)
+  async function handleRegisterButton(){
+    if (firstName !== "" && lastName !== "" && SSN !== ""){
+     fetch('http://localhost:3000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
+       .then(response => response.json())
+       .then((response) => {
+          setCard1Message(response.output);
+        })
+    } 
+
+  }
+
+
+
+  function handleVoteButton(){
+    
   }
 
   function selectButton(number: number){
@@ -90,7 +103,12 @@ function App() {
             <input type="text" placeholder='first name' onChange={(e) => firstName = e.target.value}></input>
             <input type="text" placeholder='last name' onChange={(e) => lastName = e.target.value}></input>
             <input type="password" placeholder='SSN' onChange={(e) => SSN = e.target.value}></input>
-            <button onClick={handleRegisterButton}>GET ID</button>
+            <button 
+              onClick={handleRegisterButton}
+              className={card1Message === "" ? "" : "Card-MessageButton"}
+            >
+              {card1Message === "" ? "GET ID" : card1Message}
+            </button>
           </div>
 
           <div className='Card' id='thirdCard'>
