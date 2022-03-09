@@ -40,12 +40,12 @@ class CTF:
             print("Voting period has not begun yet.\n")
         else:
             print("You did not register in time.\n")
-        
 
     def tally(self):
         print("\nVote Tally\n-----------")
         for key in self.candidates:
             print(key + ": " + str(len(self.candidates[key])))
+
 
 # Class meant to represent the CLA and the functions it may need
 class CLA:
@@ -56,10 +56,10 @@ class CLA:
 
     # Function to "Register" a user. It checks if they are a valid voter and have not registered yet, then generated a key.
     def validate(self):
-        SSN = input("What is your social security number?\n")
+        SSN = input("What is your social security number?\n").strip()
         if SSN in self.auth_dict:
-            first = input("What is your first name?\n")
-            last = input("What is your last name?\n")
+            first = input("What is your first name?\n").strip()
+            last = input("What is your last name?\n").strip()
             if self.auth_dict[SSN][0] == first and self.auth_dict[SSN][1] == last:
                 if self.auth_dict[SSN][2] == -1:
                     random.seed(89)
@@ -71,7 +71,7 @@ class CLA:
                             self.ids[id] = True
                             idSearch = False
                     self.saveVoters(False)
-                    print("Congrats " + self.auth_dict[SSN][0] + " " + self.auth_dict[SSN][1] + " our verification number is " + str(self.auth_dict[SSN][2]))
+                    print("Congrats " + self.auth_dict[SSN][0] + " " + self.auth_dict[SSN][1] + " your verification number is " + str(self.auth_dict[SSN][2]) + "!")
                 else:
                     print("You're already registered.")
             else:
@@ -131,8 +131,8 @@ class CLA:
     def sendIDs(self,CTF):
         CTF.ids = self.ids
 
+
 if __name__ == '__main__':
-    
     # First Time Setup at program start
     CLA = CLA()
     CTF = CTF()
@@ -142,10 +142,10 @@ if __name__ == '__main__':
     # Interactable user loop.
     while (running):
         menuChoice = input("Please type the number associated with the action below.\n1. Register to Vote\n2. Vote for a Candidate\n3. Reset Voting Pool\n4. CLA sends the ID list to CTF\n5. CTF Tallies Votes\n6. Quit\n")
+        menuChoice = menuChoice.strip()
 
         if (menuChoice == '1'):
             CLA.validate()
-            print("You're Registered!\n")
         elif (menuChoice == '2'):
             for key in CTF.candidates:
                 print(key)
