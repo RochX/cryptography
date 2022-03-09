@@ -48,3 +48,9 @@ After all votes have been cast, the CTF will announce the winner and will also p
 
 Alice can look through the list of IDs of people who voted for Charlie and verify that her vote was counted properly.
 However, no one else will know what Alice voted for, since only Alice knows her ID number.
+
+
+## Important Note For Multiple Elections
+If we wanted to use this system for multiple elections, we will have to give people new ID numbers for each election.
+We must do this since the system relies on the fact that no one else will know your ID while voting.
+This fact is broken after the election is over, since all IDs are published after the final count.
