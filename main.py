@@ -28,7 +28,7 @@ class CTF:
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
         self.loadTally()
 
-    def vote(self,candidate,id):
+    def vote(self,candidate,id,username):
         if int(id) in CTF.ids:
             for key in self.candidates:
                 if id in self.candidates[key]:
@@ -36,7 +36,7 @@ class CTF:
                     return
             for key in self.candidates:
                 if key == candidate:
-                    self.candidates[key].append(id)
+                    self.candidates[key].append([id,username])
                     self.saveVoteTally(False)
         elif len(CTF.ids) == 0:
             print("Voting period has not begun yet.\n")
@@ -56,6 +56,7 @@ class CTF:
         #loop through the csv list
         for row in csv_file:
             first = True
+            user = False
             key = "name"
             for item in row:
                 if first:
@@ -63,7 +64,14 @@ class CTF:
                     first = False
                     key = item
                 else:
-                    self.candidates[key].append(int(item))
+                    if not user :
+                        details = []
+                        details.append(int(item))
+                        user = True
+                    else:
+                        details.append(item)
+                        self.candidates[key].append(details)
+                        user = False
 
     # Function to save any CTF updates.
     def saveVoteTally(self,reset):
@@ -81,7 +89,8 @@ class CTF:
                 candidateData = []
                 candidateData.append(key)
                 for item in self.candidates[key]:
-                    candidateData.append(item)
+                    candidateData.append(item[0])
+                    candidateData.append(item[1])
                 rows.append(candidateData)
 
         # name of csv file 
@@ -200,7 +209,8 @@ if __name__ == '__main__':
             voteChoice = input("Please type the name exactly as above that you would like to vote for.\n")
             if voteChoice in CTF.candidates:
                 ID = input("Please type your verification ID.\n")
-                CTF.vote(voteChoice,int(ID))
+                username = input("Please give an anonymous username to see yourself in the tallyboard.\n")
+                CTF.vote(voteChoice,int(ID),username)
                 print("You Voted!")
             else:
                 print(voteChoice + " is not on the ballot.\n")
