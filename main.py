@@ -25,7 +25,8 @@ import sys
 class CTF:
     def __init__(self):
         pass
-    
+
+
 # Class meant to represent the CLA and the functions it may need
 class CLA:
     def __init__(self):
@@ -35,10 +36,10 @@ class CLA:
 
     # Function to "Register" a user. It checks if they are a valid voter and have not registered yet, then generated a key.
     def validate(self):
-        SSN = input("What is your social security number?\n")
+        SSN = input("What is your social security number?\n").strip()
         if SSN in self.auth_dict:
-            first = input("What is your first name?\n")
-            last = input("What is your last name?\n")
+            first = input("What is your first name?\n").strip()
+            last = input("What is your last name?\n").strip()
             if self.auth_dict[SSN][0] == first and self.auth_dict[SSN][1] == last:
                 if self.auth_dict[SSN][2] == -1:
                     random.seed(89)
@@ -50,7 +51,7 @@ class CLA:
                             self.ids[id] = True
                             idSearch = False
                     self.saveVoters(False)
-                    print("Congrats " + self.auth_dict[SSN][0] + " " + self.auth_dict[SSN][1] + " our verification number is " + str(self.auth_dict[SSN][2]))
+                    print("Congrats " + self.auth_dict[SSN][0] + " " + self.auth_dict[SSN][1] + " your verification number is " + str(self.auth_dict[SSN][2]) + "!")
                 else:
                     print("You're already registered.")
             else:
@@ -104,8 +105,8 @@ class CLA:
             # writing the data rows 
             csvwriter.writerows(rows)
 
+
 if __name__ == '__main__':
-    
     # First Time Setup at program start
     CLA = CLA()
     print("Welcome to the Virtual Voting Booth!")
@@ -117,7 +118,6 @@ if __name__ == '__main__':
 
         if (menuChoice == '1'):
             CLA.validate()
-            print("You're Registered!\n")
         elif (menuChoice == '2'):
             print("You've Voted!\n")
         elif (menuChoice == '3'):
