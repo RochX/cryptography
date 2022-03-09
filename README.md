@@ -18,7 +18,13 @@ When a voter wants to vote, they first must get an ID number from the CLA.
 Alice and CLA will first establish a secure connection using the Diffie-Hellman Key Exchange and *AES*.
 Alice will then request an ID number from the CLA, securing sending this request along with her full name and social security number.
 
+The CLA has a database of people in the population and their social security numbers.
+They then use this database to verify that the ID request is really coming from Alice and not someone impersonating her.
+This database also has the purpose of verifying Alice is someone who can vote.
+
 The CLA will randomly generate an ID such that no one can randomly guess it.
+- This ID will be a random number in the range of 0 to 2^64-1.
+
 They will send this ID back to Alice while also creating a dictionary that relates IDs to voter information.
 
 Now Alice has her ID number.
