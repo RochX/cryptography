@@ -27,11 +27,9 @@ import encryption_functions
 
  # TODO add key exchange to CLA and CTF
 
-class CTF:
+class CTF(encryption_functions.CryptographyProperties):
     def __init__(self):
-        # Generate RSA keys
-        self.rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-        self.rsa_public_key = self.rsa_private_key.public_key()
+        super().__init__()
 
         self.candidates = {"Captain Blackbeard": {}, "Miss Fortune": {}}
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
@@ -123,12 +121,9 @@ class CTF:
 
 
 # Class meant to represent the CLA and the functions it may need
-class CLA:
+class CLA(encryption_functions.CryptographyProperties):
     def __init__(self):
-        # Generate RSA keys
-        self.rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-        self.rsa_public_key = self.rsa_private_key.public_key()
-
+        super().__init__()
         self.auth_dict = {}     # Dictionary of Authorized Voter. This uses their SSN as a key, with an array of their first name, last name and validation number
         self.ids = {}           # Dictionary of validation Ids that have been generated and will be sent to the CTF
         self.loadVoters()       # Intializes data upon start of program.
@@ -208,9 +203,6 @@ class CLA:
         CTF.ids = self.ids
         return "ID list sent\n"
 
-    # returns CLA's public RSA key
-    def publicKeyRSA(self):
-        return self.rsa_public_key
 
     # encrypts the ID list to send to the CTF
     def encryptIDList(self, iv):
