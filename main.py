@@ -21,7 +21,9 @@ import sys
 
 
 # Virtual Election Booth Project
- 
+
+ # TODO add key exchange to CLA and CTF
+
 class CTF:
     def __init__(self):
         self.candidates = {"Captain Blackbeard": {}, "Miss Fortune": {} }
@@ -31,7 +33,6 @@ class CTF:
     def vote(self,candidate,id,username):
         if int(id) in CTF.ids:
             for key in self.candidates:
-                print(self.candidates[key].keys())
                 if str(id) in self.candidates[key].keys():
                     print("You already voted.")
                     return
