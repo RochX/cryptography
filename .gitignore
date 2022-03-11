@@ -130,3 +130,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/.vs/cryptography-final-project/v16/.suo
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
+/.vs/PythonSettings.json
+/.vs/ProjectSettings.json
+/unix_start.sh
