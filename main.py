@@ -33,10 +33,11 @@ class CTF:
         self.rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
         self.rsa_public_key = self.rsa_private_key.public_key()
 
-        self.candidates = {"Captain Blackbeard": [], "Miss Fortune": [] }
+        self.candidates = {"Captain Blackbeard": {}, "Miss Fortune": {}}
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
         self.loadTally()
 
+    # TODO fixme: people can still vote multiple times, I tested it and I was able to vote multiple times! -Xavier
     def vote(self,candidate,id,username):
         if int(id) in CTF.ids:
             for key in self.candidates:
@@ -117,7 +118,7 @@ class CTF:
         id_list_bytes = encryption_functions.decrypt_and_verify(ciphertext, CLA_rsa_public_key, self.aes_key, iv)
         id_list = id_list_bytes.decode().split(",")
         for id in id_list[1:]:
-            self.ids[id] = True
+            self.ids[int(id)] = True
         pass
 
 
@@ -217,7 +218,6 @@ class CLA:
     def encryptIDList(self, iv):
         id_list = [str(x) for x in list(self.ids.keys())]
         id_list_bytearray = bytearray("ID_List, " + ", ".join(id_list), encoding='ascii')
-        print(id_list_bytearray)
 
         return encryption_functions.encrypt_and_sign(bytes(id_list_bytearray), self.rsa_private_key, self.aes_key, iv)
 
