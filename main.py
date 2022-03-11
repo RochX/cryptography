@@ -21,7 +21,9 @@ import sys
 
 
 # Virtual Election Booth Project
- 
+
+ # TODO add key exchange to CLA and CTF
+
 class CTF:
     def __init__(self):
         self.candidates = {"Captain Blackbeard": [], "Miss Fortune": [] }
@@ -31,6 +33,7 @@ class CTF:
     def vote(self,candidate,id,username):
         if int(id) in CTF.ids:
             for key in self.candidates:
+                # TODO fix me; this check does not work since elements of each candidate list are lists themselves and not IDs
                 if id in self.candidates[key]:
                     print("You already voted.")
                     return
