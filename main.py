@@ -3,6 +3,9 @@
 import random
 import csv
 import sys
+import os
+from cryptography.hazmat.primitives.asymmetric import rsa
+import encryption_functions
 # CLA
 # (Dictionary) Database of authorized voters
 # First Name, Last Name, SSN, verification
@@ -26,6 +29,10 @@ import sys
 
 class CTF:
     def __init__(self):
+        # Generate RSA keys
+        self.rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        self.rsa_public_key = self.rsa_private_key.public_key()
+
         self.candidates = {"Captain Blackbeard": [], "Miss Fortune": [] }
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
         self.loadTally()
@@ -107,9 +114,22 @@ class CTF:
             # writing the data rows 
             csvwriter.writerows(rows)
 
+    # decrypts the ID list and verifies the signature of the message from the CLA.
+    def decryptIDList(self, ciphertext, CLA_rsa_public_key, iv):
+        id_list_bytes = encryption_functions.decrypt_and_verify(ciphertext, CLA_rsa_public_key, self.aes_key, iv)
+        id_list = id_list_bytes.decode().split(",")
+        for id in id_list[1:]:
+            self.ids[id] = True
+        pass
+
+
 # Class meant to represent the CLA and the functions it may need
 class CLA:
     def __init__(self):
+        # Generate RSA keys
+        self.rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        self.rsa_public_key = self.rsa_private_key.public_key()
+
         self.auth_dict = {}     # Dictionary of Authorized Voter. This uses their SSN as a key, with an array of their first name, last name and validation number 
         self.ids = {}           # Dictionary of validation Ids that have been generated and will be sent to the CTF
         self.loadVoters()       # Intializes data upon start of program.
@@ -188,8 +208,20 @@ class CLA:
             # writing the data rows 
             csvwriter.writerows(rows)
 
-    def sendIDs(self,CTF):
+    def sendIDs_unencrypted(self, CTF):
         CTF.ids = self.ids
+
+    # returns CLA's public RSA key
+    def publicKeyRSA(self):
+        return self.rsa_public_key
+
+    # encrypts the ID list to send to the CTF
+    def encryptIDList(self, iv):
+        id_list = [str(x) for x in list(self.ids.keys())]
+        id_list_bytearray = bytearray("ID_List, " + ", ".join(id_list), encoding='ascii')
+        print(id_list_bytearray)
+
+        return encryption_functions.encrypt_and_sign(bytes(id_list_bytearray), self.rsa_private_key, self.aes_key, iv)
 
 
 if __name__ == '__main__':
@@ -221,8 +253,19 @@ if __name__ == '__main__':
             CLA.saveVoters(True)
             CTF.saveVoteTally(True)
             print("Voting Data Reset\n")
-        elif (menuChoice == '4'):
-            CLA.sendIDs(CTF)
+        elif menuChoice == '4':
+            # TODO remove this and setup key exchange between CLA and CTF!
+            aes_key = os.urandom(32)
+            CLA.aes_key = aes_key
+            CTF.aes_key = aes_key
+
+            # set up public iv for use with AES
+            iv = os.urandom(16)
+
+            encrypted_ID_list = CLA.encryptIDList(iv)
+            CTF.decryptIDList(encrypted_ID_list, CLA.publicKeyRSA(), iv)
+        elif (menuChoice == '4.1'):
+            CLA.sendIDs_unencrypted(CTF)
             print("ID list sent\n")
         elif (menuChoice == '5'):
             CTF.tally()
