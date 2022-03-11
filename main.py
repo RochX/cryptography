@@ -40,13 +40,12 @@ class CTF:
     def vote(self,candidate,id,username):
         if int(id) in CTF.ids:
             for key in self.candidates:
-                # TODO fix me; this check does not work since elements of each candidate list are lists themselves and not IDs
-                if id in self.candidates[key]:
+                if str(id) in self.candidates[key].keys():
                     print("You already voted.")
                     return
             for key in self.candidates:
                 if key == candidate:
-                    self.candidates[key].append([id,username])
+                    self.candidates[key][id] = username
                     self.saveVoteTally(False)
         elif len(CTF.ids) == 0:
             print("Voting period has not begun yet.\n")
@@ -70,17 +69,15 @@ class CTF:
             key = "name"
             for item in row:
                 if first:
-                    self.candidates[item] = []
+                    self.candidates[item] = {}
                     first = False
                     key = item
                 else:
                     if not user :
-                        details = []
-                        details.append(int(item))
+                        idName = item
                         user = True
                     else:
-                        details.append(item)
-                        self.candidates[key].append(details)
+                        self.candidates[key][idName] = item
                         user = False
 
     # Function to save any CTF updates.
@@ -99,8 +96,9 @@ class CTF:
                 candidateData = []
                 candidateData.append(key)
                 for item in self.candidates[key]:
-                    candidateData.append(item[0])
-                    candidateData.append(item[1])
+                    print(item)
+                    candidateData.append(item)
+                    candidateData.append(self.candidates[key][item])
                 rows.append(candidateData)
 
         # name of csv file 
@@ -130,7 +128,7 @@ class CLA:
         self.rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
         self.rsa_public_key = self.rsa_private_key.public_key()
 
-        self.auth_dict = {}     # Dictionary of Authorized Voter. This uses their SSN as a key, with an array of their first name, last name and validation number 
+        self.auth_dict = {}     # Dictionary of Authorized Voter. This uses their SSN as a key, with an array of their first name, last name and validation number
         self.ids = {}           # Dictionary of validation Ids that have been generated and will be sent to the CTF
         self.loadVoters()       # Intializes data upon start of program.
 
@@ -239,7 +237,7 @@ if __name__ == '__main__':
         if (menuChoice == '1'):
             CLA.validate()
         elif (menuChoice == '2'):
-            for key in CTF.candidates:
+            for key in CTF.candidates.keys():
                 print(key)
             voteChoice = input("Please type the name exactly as above that you would like to vote for.\n")
             if voteChoice in CTF.candidates:
