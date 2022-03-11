@@ -24,19 +24,20 @@ import sys
  
 class CTF:
     def __init__(self):
-        self.candidates = {"Captain Blackbeard": [], "Miss Fortune": [] }
+        self.candidates = {"Captain Blackbeard": {}, "Miss Fortune": {} }
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
         self.loadTally()
 
     def vote(self,candidate,id,username):
         if int(id) in CTF.ids:
             for key in self.candidates:
-                if id in self.candidates[key]:
+                print(self.candidates[key].keys())
+                if str(id) in self.candidates[key].keys():
                     print("You already voted.")
                     return
             for key in self.candidates:
                 if key == candidate:
-                    self.candidates[key].append([id,username])
+                    self.candidates[key][id] = username
                     self.saveVoteTally(False)
         elif len(CTF.ids) == 0:
             print("Voting period has not begun yet.\n")
@@ -60,17 +61,15 @@ class CTF:
             key = "name"
             for item in row:
                 if first:
-                    self.candidates[item] = []
+                    self.candidates[item] = {}
                     first = False
                     key = item
                 else:
                     if not user :
-                        details = []
-                        details.append(int(item))
+                        idName = item
                         user = True
                     else:
-                        details.append(item)
-                        self.candidates[key].append(details)
+                        self.candidates[key][idName] = item
                         user = False
 
     # Function to save any CTF updates.
@@ -89,8 +88,9 @@ class CTF:
                 candidateData = []
                 candidateData.append(key)
                 for item in self.candidates[key]:
-                    candidateData.append(item[0])
-                    candidateData.append(item[1])
+                    print(item)
+                    candidateData.append(item)
+                    candidateData.append(self.candidates[key][item])
                 rows.append(candidateData)
 
         # name of csv file 
@@ -204,7 +204,7 @@ if __name__ == '__main__':
         if (menuChoice == '1'):
             CLA.validate()
         elif (menuChoice == '2'):
-            for key in CTF.candidates:
+            for key in CTF.candidates.keys():
                 print(key)
             voteChoice = input("Please type the name exactly as above that you would like to vote for.\n")
             if voteChoice in CTF.candidates:
