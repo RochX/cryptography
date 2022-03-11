@@ -27,23 +27,23 @@ import sys
 class CTF:
     def __init__(self):
         self.candidates = {"Captain Blackbeard": {}, "Miss Fortune": {} }
-        self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
+        self.ids = {}                                                       # Dictionary of validation Ids that have been generated and sent fron CLA
         self.loadTally()
 
     def vote(self,candidate,id,username):
         if int(id) in CTF.ids:
             for key in self.candidates:
                 if str(id) in self.candidates[key].keys():
-                    print("You already voted.")
-                    return
+                    return "You already voted."
             for key in self.candidates:
                 if key == candidate:
                     self.candidates[key][id] = username
                     self.saveVoteTally(False)
+            return "Congrats! You voted!"
         elif len(CTF.ids) == 0:
-            print("Voting period has not begun yet.\n")
+            return "Voting period has not begun yet.\n"
         else:
-            print("You did not register in time.\n")
+            return "You did not register in time.\n"
 
     def tally(self):
         print("\nVote Tally\n-----------")
@@ -113,11 +113,8 @@ class CLA:
         self.loadVoters()       # Intializes data upon start of program.
 
     # Function to "Register" a user. It checks if they are a valid voter and have not registered yet, then generated a key.
-    def validate(self):
-        SSN = input("What is your social security number?\n").strip()
+    def validate(self,SSN,first,last):
         if SSN in self.auth_dict:
-            first = input("What is your first name?\n").strip()
-            last = input("What is your last name?\n").strip()
             if self.auth_dict[SSN][0] == first and self.auth_dict[SSN][1] == last:
                 if self.auth_dict[SSN][2] == -1:
                     random.seed(89)
@@ -129,13 +126,13 @@ class CLA:
                             self.ids[id] = True
                             idSearch = False
                     self.saveVoters(False)
-                    print("Congrats " + self.auth_dict[SSN][0] + " " + self.auth_dict[SSN][1] + " your verification number is " + str(self.auth_dict[SSN][2]) + "!")
+                    return "Congrats " + self.auth_dict[SSN][0] + " " + self.auth_dict[SSN][1] + " your verification number is " + str(self.auth_dict[SSN][2]) + "!"
                 else:
-                    print("You're already registered.")
+                    return "You're already registered to vote."
             else:
-                print("Your SSN and name does not match the database.")
+                return "The SSN and name you entered do not match the database pair."
         else:
-            print("The social security number you entered, " + SSN + ", is not valid")
+            return "The social security number you entered, " + SSN + ", is not authorized to vote."
 
     # Function to load Voter data from the "voter_auth.csv" file
     def loadVoters(self):
@@ -188,6 +185,7 @@ class CLA:
 
     def sendIDs(self,CTF):
         CTF.ids = self.ids
+        return "ID list sent\n"
 
 
 if __name__ == '__main__':
@@ -203,7 +201,13 @@ if __name__ == '__main__':
         menuChoice = menuChoice.strip()
 
         if (menuChoice == '1'):
-            CLA.validate()
+            SSN = input("What is your social security number?\n").strip()
+            if len(SSN) == 9:
+                first = input("What is your first name?\n").strip()
+                last = input("What is your last name?\n").strip()
+                print(CLA.validate(SSN,first,last))
+            else:
+                print(SSN + " is not a valid SSN")
         elif (menuChoice == '2'):
             for key in CTF.candidates.keys():
                 print(key)
@@ -211,8 +215,7 @@ if __name__ == '__main__':
             if voteChoice in CTF.candidates:
                 ID = input("Please type your verification ID.\n")
                 username = input("Please give an anonymous username to see yourself in the tallyboard.\n")
-                CTF.vote(voteChoice,int(ID),username)
-                print("You Voted!")
+                print(CTF.vote(voteChoice,int(ID),username))
             else:
                 print(voteChoice + " is not on the ballot.\n")
         elif (menuChoice == '3'):
@@ -220,8 +223,7 @@ if __name__ == '__main__':
             CTF.saveVoteTally(True)
             print("Voting Data Reset\n")
         elif (menuChoice == '4'):
-            CLA.sendIDs(CTF)
-            print("ID list sent\n")
+            print(CLA.sendIDs(CTF))
         elif (menuChoice == '5'):
             CTF.tally()
         elif (menuChoice == '6'):
