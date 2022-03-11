@@ -14,6 +14,7 @@ function App() {
   var lastName = "";
   var SSN = "";
   var id = "";
+  var nickname = "";
   var selectedOption = "";
 
   const [card1Message, setCard1Message] = React.useState("");
@@ -21,7 +22,7 @@ function App() {
 
   async function handleRegisterButton(){
     if (firstName !== "" && lastName !== "" && SSN !== ""){
-     fetch('http://localhost:3000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
+     fetch('http://localhost:4000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
        .then(response => response.json())
        .then((response) => {
           setCard1Message(response.output);
@@ -29,15 +30,13 @@ function App() {
     } 
 
   }
-
-
-
+  
   function handleVoteButton(){
     
   }
 
   function selectButton(number: number){
-    if ( id !== "" ){
+    if ( id !== ""  && nickname !== ""){
       switch(number){
         case 1:
           setButton1(!button1Selected);
@@ -77,7 +76,14 @@ function App() {
           break;
       }
     } else {
-      setCard2Message("Please provide your ID first");
+      if (id === "" && nickname === ""){
+        setCard2Message("Please provide your ID and a nickname first");
+      }
+      else if (id === ""){
+        setCard2Message("Please provide your ID first");
+      } else if (nickname === ""){
+        setCard2Message("Please provide an anonymous nickname first");
+      }
     }
   }
 
@@ -116,6 +122,7 @@ function App() {
               2. Vote
             </h2>
             <input disabled = {voted} type="text"  placeholder='your ID' onChange={(e) => id = e.target.value}></input>
+            <input disabled = {voted} type="text"  placeholder='anonymous nickname' onChange={(e) => nickname = e.target.value}></input>
             <p className={voted ? "Success" : "Error"}>{card2Message}</p>
             <div className='Card-Vote-MainFlex'>
               <div className='Card-Vote-MainFlex-Left'>

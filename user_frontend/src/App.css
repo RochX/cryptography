@@ -176,10 +176,10 @@
 
 .Card > p {
   font-family: Montserrat;
-  font-size: 16px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 20px;
   letter-spacing: 0em;
   text-align: left; 
   width: 100%;
@@ -189,10 +189,10 @@
 
 .Card > .Success {
   font-family: Montserrat;
-  font-size: 16px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 20px;
   letter-spacing: 0em;
   text-align: left; 
   width: 100%;
