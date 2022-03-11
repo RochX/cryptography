@@ -247,10 +247,7 @@ if __name__ == '__main__':
             CTF.saveVoteTally(True)
             print("Voting Data Reset\n")
         elif menuChoice == '4':
-            # TODO remove this and setup key exchange between CLA and CTF!
-            aes_key = os.urandom(32)
-            CLA.aes_key = aes_key
-            CTF.aes_key = aes_key
+            encryption_functions.aes_key_exchange_with_rsa(CLA, CTF)
 
             # set up public iv for use with AES
             iv = os.urandom(16)
