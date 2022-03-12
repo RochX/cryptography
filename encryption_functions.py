@@ -15,7 +15,8 @@ class CryptographyProperties:
         self.rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
         self.rsa_public_key = self.rsa_private_key.public_key()
 
-        self.aes_key = b'initial'
+        self.aes_key = b'key_initial'
+        self.iv = b'iv_initial'
 
     # returns public RSA key
     def publicKeyRSA(self):
@@ -92,10 +93,16 @@ p2 decrypts with their private key
 p2 verifies signature with p1's public key
 
 p1 and p2 now have shared keys
+
+we will also establish the shared IV in this step
 '''
 def aes_key_exchange_with_rsa(p1: CryptographyProperties, p2: CryptographyProperties):
     encrypted_key = p1.generate_encrypted_aes_key(p2.publicKeyRSA())
     p2.decrypt_and_set_aes_key(encrypted_key, p1.publicKeyRSA())
+
+    shared_iv = os.urandom(16)
+    p1.iv = shared_iv
+    p2.iv = shared_iv
 
 
 # takes in a message a byte string and signs it, then encrypts it with AES
@@ -180,5 +187,17 @@ if __name__ == '__main__':
     print("Post Transfer")
     print("p1 aes key: ", p1.aes_key)
     print("p2 aes key: ", p2.aes_key)
+
+    print()
+
+    message = b'Shared IV through classes!'
+
+    print('iv:', iv)
+    ciphertext = encrypt_and_sign(message, p1.rsa_private_key, p1.aes_key, p1.iv)
+    print('ciphertext:', ciphertext)
+
+    print()
+
+    print('message:', decrypt_and_verify(ciphertext, p1.publicKeyRSA(), p2.aes_key, p2.iv))
 
 
