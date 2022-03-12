@@ -24,6 +24,20 @@ import encryption_functions
 
 # Virtual Election Booth Project
 
+class Voter(encryption_functions.CryptographyProperties):
+    def __init__(self, first_name, last_name, ssn):
+        super().__init__()
+
+        # these should be set upon object creation
+        self.first_name = first_name
+        self.last_name = last_name
+        self.ssn = ssn
+
+        # these might not be known at object creation time
+        self.voter_id = -1
+        self.desired_candidate = "Person"
+        self.nickname = "Nickname"
+
 
 class CTF(encryption_functions.CryptographyProperties):
     def __init__(self):
