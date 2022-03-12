@@ -4,7 +4,6 @@ import random
 import csv
 import sys
 import os
-from cryptography.hazmat.primitives.asymmetric import rsa
 import encryption_functions
 # CLA
 # (Dictionary) Database of authorized voters
@@ -25,7 +24,6 @@ import encryption_functions
 
 # Virtual Election Booth Project
 
- # TODO add key exchange to CLA and CTF
 
 class CTF(encryption_functions.CryptographyProperties):
     def __init__(self):
@@ -254,8 +252,6 @@ if __name__ == '__main__':
 
             encrypted_ID_list = CLA.encryptIDList(iv)
             CTF.decryptIDList(encrypted_ID_list, CLA.publicKeyRSA(), iv)
-        elif (menuChoice == '4.1'):
-            print(CLA.sendIDs_unencrypted(CTF))
         elif (menuChoice == '5'):
             CTF.tally()
         elif (menuChoice == '6'):
