@@ -25,6 +25,8 @@ import encryption_functions
 # Virtual Election Booth Project
 
 class Voter(encryption_functions.CryptographyProperties):
+    PERSONAL_INFO_PREFIX = b'PERSONAL_INFO'
+
     def __init__(self, first_name, last_name, ssn):
         super().__init__()
 
@@ -44,13 +46,22 @@ class Voter(encryption_functions.CryptographyProperties):
         b_first_name = bytearray(self.first_name, encoding='utf-8')
         b_last_name = bytearray(self.last_name, encoding='utf-8')
 
-        message = b'PERSONAL_INFO, ' + b_ssn + b', ' + b_first_name + b', ' + b_last_name
+        message = Voter.PERSONAL_INFO_PREFIX + b', ' + b_ssn + b', ' + b_first_name + b', ' + b_last_name
 
         # TODO remove temporary assignment of AES key and IV!
         #self.aes_key = os.urandom(32)
         #self.iv = os.urandom(16)
 
         return encryption_functions.encrypt_and_sign(message, self.rsa_private_key, self.aes_key, self.iv)
+
+    def decrypt_voter_id(self, ciphertext, cla_rsa_pub_key):
+        plaintext = encryption_functions.decrypt_and_verify(ciphertext, cla_rsa_pub_key, self.aes_key, self.iv)
+        plaintext = plaintext.split(b', ')
+
+        # assert we got an ID back
+        assert plaintext[0] == CLA.ID_MESSAGE_PREFIX
+
+        self.voter_id = plaintext[1].decode()
 
     # encrypt vote in the string format: "VOTE, ID, CANDIDATE, NICKNAME"
     def encrypt_vote(self):
@@ -158,6 +169,9 @@ class CTF(encryption_functions.CryptographyProperties):
 
 # Class meant to represent the CLA and the functions it may need
 class CLA(encryption_functions.CryptographyProperties):
+    ID_MESSAGE_PREFIX = b'VOTER_ID_IS'
+    INVALID_PERSONAL_INFO_PREFIX = b'INVALID_PERSONAL_INFO'
+
     def __init__(self):
         super().__init__()
         self.auth_dict = {}     # Dictionary of Authorized Voter. This uses their SSN as a key, with an array of their first name, last name and validation number
@@ -165,7 +179,7 @@ class CLA(encryption_functions.CryptographyProperties):
         self.loadVoters()       # Intializes data upon start of program.
 
     # Function to "Register" a user. It checks if they are a valid voter and have not registered yet, then generated a key.
-    def validate(self,SSN,first,last):
+    def validate(self, SSN, first, last, raw_output=False):
         if SSN in self.auth_dict:
             if self.auth_dict[SSN][0] == first and self.auth_dict[SSN][1] == last:
                 if self.auth_dict[SSN][2] == -1:
@@ -178,13 +192,49 @@ class CLA(encryption_functions.CryptographyProperties):
                             self.ids[id] = True
                             idSearch = False
                     self.saveVoters(False)
-                    return "Congrats " + self.auth_dict[SSN][0] + " " + self.auth_dict[SSN][1] + " your verification number is " + str(self.auth_dict[SSN][2]) + "!"
+                    if raw_output:
+                        return CLA.ID_MESSAGE_PREFIX + b', ' + bytes(str(self.auth_dict[SSN][2]), encoding='utf-8')
+                    else:
+                        return "Congrats " + self.auth_dict[SSN][0] + " " + self.auth_dict[SSN][1] + " your verification number is " + str(self.auth_dict[SSN][2]) + "!"
                 else:
-                    return "You're already registered to vote."
+                    if raw_output:
+                        return CLA.ID_MESSAGE_PREFIX + b', ' + bytes(str(self.auth_dict[SSN][2]), encoding='utf-8')
+                    else:
+                        return "You're already registered to vote."
             else:
                 return "The SSN and name you entered do not match the database pair."
         else:
             return "The social security number you entered, " + SSN + ", is not authorized to vote."
+
+    # validate a voter based on a voter message from a Voter object
+    def validate_voter(self, voter_message, voter_rsa_pub_key):
+        # decrypt, verify signature, and split our message
+        plaintext = encryption_functions.decrypt_and_verify(voter_message, voter_rsa_pub_key, self.aes_key, self.iv)
+        voter_info = plaintext.split(sep=b', ')
+
+        # assume we actually received a voter personal info message
+        assert voter_info[0] == Voter.PERSONAL_INFO_PREFIX
+
+        # get personal info
+        ssn = voter_info[1].decode()
+        first = voter_info[2].decode()
+        last = voter_info[3].decode()
+
+        # validate voter
+        voter_id = self.validate(ssn, first, last, raw_output=True)
+
+        # make our voter id bytes if it is not for some reason
+        if type(voter_id) is not bytes:
+            voter_id = bytes(voter_id, encoding='utf-8')
+
+        # check if we got an ID or not
+        if not voter_id.startswith(CLA.ID_MESSAGE_PREFIX):
+            voter_id = CLA.INVALID_PERSONAL_INFO_PREFIX
+
+        # encrypt and sign voter ID and then return it
+        return encryption_functions.encrypt_and_sign(voter_id, self.rsa_private_key, self.aes_key, self.iv)
+
+
 
     # Function to load Voter data from the "voter_auth.csv" file
     def loadVoters(self):
