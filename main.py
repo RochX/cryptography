@@ -31,12 +31,36 @@ class Voter(encryption_functions.CryptographyProperties):
         # these should be set upon object creation
         self.first_name = first_name
         self.last_name = last_name
-        self.ssn = ssn
+        self.ssn = str(ssn)
 
         # these might not be known at object creation time
         self.voter_id = -1
         self.desired_candidate = "Person"
         self.nickname = "Nickname"
+
+    # encrypt personal info in the string format: "PERSONAL_INFO, SSN, FIRST_NAME, LAST_NAME"
+    def encrypt_personal_info(self):
+        b_ssn = bytearray(self.ssn, encoding='utf-8')
+        b_first_name = bytearray(self.first_name, encoding='utf-8')
+        b_last_name = bytearray(self.last_name, encoding='utf-8')
+
+        message = b'PERSONAL_INFO, ' + b_ssn + b', ' + b_first_name + b', ' + b_last_name
+
+        # TODO remove temporary assignment of AES key and IV!
+        #self.aes_key = os.urandom(32)
+        #self.iv = os.urandom(16)
+
+        return encryption_functions.encrypt_and_sign(message, self.rsa_private_key, self.aes_key, self.iv)
+
+    # encrypt vote in the string format: "VOTE, ID, CANDIDATE, NICKNAME"
+    def encrypt_vote(self):
+        b_voter_id = bytearray(str(self.voter_id), encoding='utf-8')
+        b_desired_candidate = bytearray(self.desired_candidate, encoding='utf-8')
+        b_nickname = bytearray(self.nickname, encoding='utf-8')
+
+        vote = b'VOTE, ' + b_voter_id + b', ' + b_desired_candidate + b', ' + b_nickname
+
+        return encryption_functions.encrypt_and_sign(vote, self.rsa_private_key, self.aes_key, self.iv)
 
 
 class CTF(encryption_functions.CryptographyProperties):
