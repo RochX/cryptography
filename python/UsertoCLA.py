@@ -1,8 +1,8 @@
 import sys
 import pickle
-import filenames
-import main
-import encryption_functions
+import python.filenames as filenames
+from python.main import CLA, Voter, CTF
+import python.encryption_functions as encryption_functions
 
 #print("[python] CLA received: " + str(sys.argv[1]) + " " + str(sys.argv[2]) + " " + str(sys.argv[3]))
 
@@ -25,10 +25,10 @@ try:
     Voter.decrypt_voter_id(EncryptedVoterID,CLA.publicKeyRSA())
 
     # Method to convert decrypted data to proper format
-    validationMessage("Your ID is " + Voter.voter_id)
+    validationMessage = "Your ID is " + Voter.voter_id
     import CLAtoCTF
 except AssertionError:
-    validationMessage("Invalid Personal Info.")
+    validationMessage ="Invalid Personal Info."
 
 CLAPickle = open(filenames.CLA, 'wb')
 

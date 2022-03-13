@@ -1,5 +1,8 @@
 import sys
-import main
+import pickle
+import python.filenames as filenames
+from python.main import CLA, Voter, CTF
+import python.encryption_functions as encryption_functions
 
 # print("Hello world, I'm python code running on the CLA")
 
