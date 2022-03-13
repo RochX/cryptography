@@ -1,6 +1,5 @@
 import sys
 import pickle
-import encryption_functions
 import filenames
 
 import os,sys,inspect
@@ -9,6 +8,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 
 from main import CLA,CTF,Voter
+import encryption_functions
 
 #print("[python] CLA received: " + str(sys.argv[1]) + " " + str(sys.argv[2]) + " " + str(sys.argv[3]))
 
@@ -32,6 +32,7 @@ try:
 
     # Method to convert decrypted data to proper format
     validationMessage("Your ID is " + Voter.voter_id)
+    import CLAtoCTF
 except AssertionError:
     validationMessage("Invalid Personal Info.")
 

@@ -1,5 +1,4 @@
 import sys
-import encryption_function
 import filenames
 
 import os,sys,inspect
@@ -8,6 +7,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,parentdir) 
 
 from main import CLA,CTF,Voter
+import encryption_function
 
 #print("Hello world, I'm python code running on the CTF")
 
