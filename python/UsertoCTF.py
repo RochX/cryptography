@@ -1,8 +1,8 @@
 import sys
 import pickle
-import python.filenames as filenames
-from python.main import CLA, Voter, CTF
-import python.encryption_functions as encryption_functions
+import filenames
+import encryption_functions
+from main import CLA, CTF, Voter
 
 #print("Hello world, I'm python code running on the CTF")
 
@@ -30,7 +30,7 @@ voteMessage = Voter.decrypt_vote_result(voteMessage,CTF.publicKeyRSA())
 CTFPickle = open(filenames.CTF, 'ab')
 
 # source, destination
-pickle.dump(db, CTFPickle)                     
+pickle.dump(CTF, CTFPickle)
 CTFPickle.close()
 
 print(voteMessage)

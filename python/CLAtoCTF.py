@@ -1,8 +1,8 @@
 import sys
 import pickle
-import python.filenames as filenames
-from python.main import CLA, Voter, CTF
-import python.encryption_functions as encryption_functions
+import filenames
+import encryption_functions
+from main import CLA, CTF, Voter
 
 # print("Hello world, I'm python code running on the CLA")
 
@@ -20,11 +20,11 @@ CTF.decryptIDList(encrypted_ID_list, CLA.publicKeyRSA())
 CLAPickle = open(filenames.CLA, 'wb')
 
 # source, destination
-pickle.dump(db, CLAPickle)                     
+pickle.dump(CLA, CLAPickle)
 CLAPickle.close()
 
 CTFPickle = open(filenames.CTF, 'wb')
 
 # source, destination
-pickle.dump(db, CTFPickle)                     
+pickle.dump(CTF, CTFPickle)
 CTFPickle.close()

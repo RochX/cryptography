@@ -1,8 +1,8 @@
 import sys
 import pickle
-import python.filenames as filenames
-from python.main import CLA, Voter, CTF
-import python.encryption_functions as encryption_functions
+import filenames
+import encryption_functions
+from main import CLA, CTF, Voter
 
 #print("[python] CLA received: " + str(sys.argv[1]) + " " + str(sys.argv[2]) + " " + str(sys.argv[3]))
 
@@ -28,7 +28,7 @@ try:
     validationMessage = "Your ID is " + Voter.voter_id
     import CLAtoCTF
 except AssertionError:
-    validationMessage ="Invalid Personal Info."
+    validationMessage = "Invalid Personal Info."
 
 CLAPickle = open(filenames.CLA, 'wb')
 
