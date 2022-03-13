@@ -33,7 +33,7 @@ except AssertionError:
 CLAPickle = open(filenames.CLA, 'wb')
 
 # source, destination
-pickle.dump(db, CLAPickle)                     
+pickle.dump(CLA, CLAPickle)
 CLAPickle.close()
 
 print(validationMessage)
