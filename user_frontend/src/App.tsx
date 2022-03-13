@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+
 function App() {
+
   const [button1Selected, setButton1] = React.useState(false);
   const [button2Selected, setButton2] = React.useState(false);
   const [button3Selected, setButton3] = React.useState(false);
@@ -19,7 +21,7 @@ function App() {
 
    async function handleRegisterButton(){
      if (firstName !== "" && lastName !== "" && SSN !== ""){
-      fetch('http://localhost:4000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
+      fetch('http://localhost:3500/register/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
         .then(response => response.json())
         .then((response) => {
            setCard1Message(response.output);

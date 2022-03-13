@@ -16,11 +16,16 @@
  cd cla_backend
  npm install
  pm2 start node cla.js
- echo 'CTF_BACKEND:'
- echo '----------------------------------------'
+echo '----------------------------------------'
+ echo 'USER_BACKEND:'
  cd ../ctf_backend
  npm install
  pm2 start node ctf.js
+echo '----------------------------------------'
+ echo 'CTF_BACKEND:'
+ cd ../user_backend
+ npm install
+ pm2 start node user.js
  echo 'USER_FRONTEND:'
  echo '----------------------------------------'
  cd ../user_frontend
@@ -28,6 +33,7 @@
  echo '----------------------------------------'
  echo 'CLA_backend: http://localhost:4000/'
  echo 'CTF_backend: http://localhost:5000/'
+ echo 'User_backend: http://localhost:3500/'
  echo 'User_frontend: http://localhost:3000/'
  echo '----------------------------------------'
  echo 'To stop all servers type: "pm2 stop all"'
