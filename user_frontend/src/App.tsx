@@ -1,46 +1,42 @@
 import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-
 function App() {
-
   const [button1Selected, setButton1] = React.useState(false);
   const [button2Selected, setButton2] = React.useState(false);
   const [button3Selected, setButton3] = React.useState(false);
   const [button4Selected, setButton4] = React.useState(false);
   const [voted, setVoted] = React.useState(false);
-
   var firstName = "";
-  var lastName = "";
-  var SSN = "";
-  var id = "";
-  var selectedOption = "";
+   var lastName = "";
+   var SSN = "";
+   var id = "";
+   var nickname = "";
+   var selectedOption = "";
 
-  const [card1Message, setCard1Message] = React.useState("");
-  const [card2Message, setCard2Message] = React.useState("");
+   const [card1Message, setCard1Message] = React.useState("");
+   const [card2Message, setCard2Message] = React.useState("");
 
-  async function handleRegisterButton(){
-    if (firstName !== "" && lastName !== "" && SSN !== ""){
-     fetch('http://localhost:3000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
-       .then(response => response.json())
-       .then((response) => {
-          setCard1Message(response.output);
-        })
-    } 
+   async function handleRegisterButton(){
+     if (firstName !== "" && lastName !== "" && SSN !== ""){
+      fetch('http://localhost:4000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
+        .then(response => response.json())
+        .then((response) => {
+           setCard1Message(response.output);
+         })
+     } 
 
-  }
+   }
 
+   function handleVoteButton(){
 
+   }
 
-  function handleVoteButton(){
-    
-  }
-
-  function selectButton(number: number){
-    if ( id !== "" ){
-      switch(number){
-        case 1:
-          setButton1(!button1Selected);
+   function selectButton(number: number){
+     if ( id !== ""  && nickname !== ""){
+       switch(number){
+         case 1:
+           setButton1(!button1Selected);
           setButton2(false);
           setButton3(false);
           setButton4(false);
@@ -74,12 +70,19 @@ function App() {
           selectedOption = "D";
           setCard2Message("Successfully voted for option D");
           setVoted(true);
-          break;
-      }
-    } else {
-      setCard2Message("Please provide your ID first");
-    }
-  }
+           break;
+       }
+     } else {
+       if (id === "" && nickname === ""){
+         setCard2Message("Please provide your ID and a nickname first");
+       }
+       else if (id === ""){
+         setCard2Message("Please provide your ID first");
+       } else if (nickname === ""){
+         setCard2Message("Please provide an anonymous nickname first");
+       }
+     }
+   }
 
   return (
     <div className="App">
@@ -110,15 +113,15 @@ function App() {
               {card1Message === "" ? "GET ID" : card1Message}
             </button>
           </div>
-
           <div className='Card' id='thirdCard'>
             <h2>
-              2. Vote
-            </h2>
-            <input disabled = {voted} type="text"  placeholder='your ID' onChange={(e) => id = e.target.value}></input>
-            <p className={voted ? "Success" : "Error"}>{card2Message}</p>
-            <div className='Card-Vote-MainFlex'>
-              <div className='Card-Vote-MainFlex-Left'>
+               2. Vote
+             </h2>
+             <input disabled = {voted} type="text"  placeholder='your ID' onChange={(e) => id = e.target.value}></input>
+             <input disabled = {voted} type="text"  placeholder='anonymous nickname' onChange={(e) => nickname = e.target.value}></input>
+             <p className={voted ? "Success" : "Error"}>{card2Message}</p>
+             <div className='Card-Vote-MainFlex'>
+               <div className='Card-Vote-MainFlex-Left'>
                 <button 
                   disabled = {voted}
                   onClick={() => selectButton(1)}
@@ -157,5 +160,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
