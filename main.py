@@ -325,6 +325,32 @@ if __name__ == '__main__':
     # First Time Setup at program start
     CLA = CLA()
     CTF = CTF()
+
+    # reset stuff
+    CLA.saveVoters(True)
+    CTF.saveVoteTally(True)
+
+    # temp code
+    temp_Voter = Voter('John', 'Doe', '123456789')
+    temp_Voter.desired_candidate = 'Miss Fortune'
+    temp_Voter.nickname = 'temporary_john'
+
+    # voter registers
+    encryption_functions.aes_key_exchange_with_rsa(CLA, temp_Voter)
+    encrypted_voter_id = CLA.validate_voter(temp_Voter.encrypt_personal_info(), temp_Voter.publicKeyRSA())
+    temp_Voter.decrypt_voter_id(encrypted_voter_id, CLA.publicKeyRSA())
+
+    # id list transfer
+    encryption_functions.aes_key_exchange_with_rsa(CLA, CTF)
+    encrypted_ID_list = CLA.encryptIDList()
+    CTF.decryptIDList(encrypted_ID_list, CLA.publicKeyRSA())
+
+    # voter votes
+    encryption_functions.aes_key_exchange_with_rsa(CTF, temp_Voter)
+    voter_message = temp_Voter.encrypt_vote()
+    encrypted_vote_result = CTF.vote_from_voter_message(voter_message, temp_Voter.publicKeyRSA())
+    decrypted_vote_result = temp_Voter.decrypt_vote_result(encrypted_vote_result, CTF.publicKeyRSA())
+
     print("Welcome to the Virtual Voting Booth!\n")
     running = True
     
