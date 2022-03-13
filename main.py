@@ -26,6 +26,7 @@ import encryption_functions
 
 class Voter(encryption_functions.CryptographyProperties):
     PERSONAL_INFO_PREFIX = b'PERSONAL_INFO'
+    VOTE_PREFIX = b'VOTE'
 
     def __init__(self, first_name, last_name, ssn):
         super().__init__()
@@ -69,9 +70,12 @@ class Voter(encryption_functions.CryptographyProperties):
         b_desired_candidate = bytearray(self.desired_candidate, encoding='utf-8')
         b_nickname = bytearray(self.nickname, encoding='utf-8')
 
-        vote = b'VOTE, ' + b_voter_id + b', ' + b_desired_candidate + b', ' + b_nickname
+        vote = Voter.VOTE_PREFIX + b', ' + b_voter_id + b', ' + b_desired_candidate + b', ' + b_nickname
 
         return encryption_functions.encrypt_and_sign(vote, self.rsa_private_key, self.aes_key, self.iv)
+
+    def decrypt_vote_result(self, ciphertext, ctf_rsa_pub_key):
+        return encryption_functions.decrypt_and_verify(ciphertext, ctf_rsa_pub_key, self.aes_key, self.iv)
 
 
 class CTF(encryption_functions.CryptographyProperties):
@@ -92,11 +96,30 @@ class CTF(encryption_functions.CryptographyProperties):
                 if key == candidate:
                     self.candidates[key][id] = username
                     self.saveVoteTally(False)
-            return "Congrats! You voted!"
+                    return "Congrats! You voted!"
+            return "Candidate is not present."
         elif len(CTF.ids) == 0:
             return "Voting period has not begun yet.\n"
         else:
             return "You did not register in time.\n"
+
+    def vote_from_voter_message(self, ciphertext, voter_rsa_public_key):
+        plaintext = encryption_functions.decrypt_and_verify(ciphertext, voter_rsa_public_key, self.aes_key, self.iv)
+        plaintext_arr = plaintext.split(sep=b', ')
+
+        # assume we get a vote message
+        assert plaintext_arr[0] == Voter.VOTE_PREFIX
+
+        voter_id = plaintext_arr[1].decode()
+        desired_candidate = plaintext_arr[2].decode()
+        nickname = plaintext_arr[3].decode()
+
+        vote_result = self.vote(desired_candidate, voter_id, nickname)
+
+        if type(vote_result) != bytes:
+            vote_result = bytes(vote_result, encoding='utf-8')
+
+        return encryption_functions.encrypt_and_sign(vote_result, self.rsa_private_key, self.aes_key, self.iv)
 
     def tally(self):
         print("\nVote Tally\n-----------")
@@ -159,8 +182,8 @@ class CTF(encryption_functions.CryptographyProperties):
             csvwriter.writerows(rows)
 
     # decrypts the ID list and verifies the signature of the message from the CLA.
-    def decryptIDList(self, ciphertext, CLA_rsa_public_key, iv):
-        id_list_bytes = encryption_functions.decrypt_and_verify(ciphertext, CLA_rsa_public_key, self.aes_key, iv)
+    def decryptIDList(self, ciphertext, CLA_rsa_public_key):
+        id_list_bytes = encryption_functions.decrypt_and_verify(ciphertext, CLA_rsa_public_key, self.aes_key, self.iv)
         id_list = id_list_bytes.decode().split(",")
         for id in id_list[1:]:
             self.ids[int(id)] = True
@@ -291,11 +314,11 @@ class CLA(encryption_functions.CryptographyProperties):
 
 
     # encrypts the ID list to send to the CTF
-    def encryptIDList(self, iv):
+    def encryptIDList(self):
         id_list = [str(x) for x in list(self.ids.keys())]
         id_list_bytearray = bytearray("ID_List, " + ", ".join(id_list), encoding='ascii')
 
-        return encryption_functions.encrypt_and_sign(bytes(id_list_bytearray), self.rsa_private_key, self.aes_key, iv)
+        return encryption_functions.encrypt_and_sign(bytes(id_list_bytearray), self.rsa_private_key, self.aes_key, self.iv)
 
 
 if __name__ == '__main__':
@@ -335,11 +358,8 @@ if __name__ == '__main__':
         elif menuChoice == '4':
             encryption_functions.aes_key_exchange_with_rsa(CLA, CTF)
 
-            # set up public iv for use with AES
-            iv = os.urandom(16)
-
-            encrypted_ID_list = CLA.encryptIDList(iv)
-            CTF.decryptIDList(encrypted_ID_list, CLA.publicKeyRSA(), iv)
+            encrypted_ID_list = CLA.encryptIDList()
+            CTF.decryptIDList(encrypted_ID_list, CLA.publicKeyRSA())
         elif (menuChoice == '5'):
             CTF.tally()
         elif (menuChoice == '6'):
