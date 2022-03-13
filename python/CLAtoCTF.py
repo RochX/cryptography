@@ -9,15 +9,25 @@ from main import CLA,CTF
 
 # print("Hello world, I'm python code running on the CLA")
 
-CLA = CLA()
-CTF = CTF()
+CLAfile = open(filenames.CLA, 'rb')     
+CLA = pickle.load(CLAfile)
+CLAfile.close()
+CTFfile = open(filenames.CTF, 'rb')     
+CTF = pickle.load(CTFfile)
+CTFfile.close()
 
-# Method to convert dictionary of CLA ids to string
+encryption_functions.aes_key_exchange_with_rsa(CLA, CTF)
+encrypted_ID_list = CLA.encryptIDList()
+CTF.decryptIDList(encrypted_ID_list, CLA.publicKeyRSA())
 
-# Encrypt converted string
+CLAPickle = open(filenames.CLA, 'wb')
 
-CLA.sendIDs()
+# source, destination
+pickle.dump(db, CLAPickle)                     
+CLAPickle.close()
 
-# CTF Decryption
+CTFPickle = open(filenames.CTF, 'wb')
 
-# CTF Convert to Dictionary
+# source, destination
+pickle.dump(db, CTFPickle)                     
+CTFPickle.close()
