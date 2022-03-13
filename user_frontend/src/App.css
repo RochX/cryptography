@@ -5,7 +5,6 @@
   height: fit-content;
   background-color: var(--dark-blue);
 }
-
 .MainFlex{
   display: flex;
   flex-direction: row;
@@ -14,17 +13,14 @@
   min-width: 100vw;
   min-height: 100vh;
 }
-
 .MainFlex-Left{
   display: flex;
   flex-direction: column;
 }
-
 .MainFlex-Right{
   display: flex;
   flex-direction: column;
 }
-
 .Card {
   width: 448px;
   height: 320px;
@@ -35,7 +31,6 @@
   flex-direction: column;
   align-items: center;
 }
-
 #firstCard{
   background-color: var(--dark-blue);
   font-family: Krona One;
@@ -47,7 +42,6 @@
   text-align: left;
   color: var(--white);
 }
-
 #firstCard-line{
   margin-top: 5px;
   width: 100%;
@@ -55,7 +49,6 @@
   border-radius: 15px;
   background-color: var(--light-blue);
 }
-
 .Card > h1{
   background-color: var(--dark-blue);
   font-family: Krona One;
@@ -67,7 +60,6 @@
   text-align: left;
   color: var(--white);
 }
-
 .Card > h2{
   width: 100%;
   font-family: Montserrat;
@@ -81,7 +73,6 @@
   margin-left: 30px;
   margin-bottom: 10px;
 }
-
 .Card > input{
   width: 90%;
   margin: 6px;
@@ -99,7 +90,6 @@
   letter-spacing: 0em;
   text-align: left;
 }
-
 .Card > button{
   margin-top: auto;
   margin-bottom: calc(5px + 20px);
@@ -119,15 +109,12 @@
   letter-spacing: 0em;
   text-align: center;  
 }
-
 .Card > button:hover{
   background-color: var(--light-blue-darker);
 }
-
 .Card > button:active {
   transform: translateY(2px);
 }
-
 .Card-Vote-MainFlex{
   display: flex;
   flex-direction: column;
@@ -136,12 +123,10 @@
   margin-top: auto;
   margin-bottom: 20px;
 }
-
 .Card-Vote-MainFlex-Left{
   display: flex;
   flex-direction: row;
 }
-
 .Card-Vote-MainFlex > div > button{
   margin: 5px;
   color: var(--white);
@@ -161,45 +146,41 @@
   letter-spacing: 0em;
   text-align: center;  
 }
-
 .Card-Vote-MainFlex > div  > button:hover{
   background-color: var(--light-blue-darker);
 }
-
 .Card-Vote-MainFlex > div  > button:active {
   transform: translateY(2px);
 }
-
 .Card-Vote-MainFlex-SelectedButton{
   background-color: var(--selected) !important;
 }
 
-.Card > p {
-  font-family: Montserrat;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0em;
-  text-align: left; 
-  width: 100%;
+ .Card > p {
+   font-family: Montserrat;
+   font-size: 14px;
+   font-style: normal;
+   font-weight: 600;
+   line-height: 20px;
+   letter-spacing: 0em;
+   text-align: left; 
+   width: 100%;
   padding-left: 50px;
   color: var(--error)
 }
 
-.Card > .Success {
-  font-family: Montserrat;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0em;
-  text-align: left; 
-  width: 100%;
+ .Card > .Success {
+   font-family: Montserrat;
+   font-size: 14px;
+   font-style: normal;
+   font-weight: 600;
+   line-height: 20px;
+   letter-spacing: 0em;
+   text-align: left; 
+   width: 100%;
   padding-left: 50px;
   color: var(--selected);
 }
-
 .Card-MessageButton{
   width: fit-content !important;
   background-color: var(--selected) !important;
