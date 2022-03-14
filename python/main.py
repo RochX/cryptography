@@ -175,7 +175,7 @@ class CTF(encryption_functions.CryptographyProperties):
                 candidateData = []
                 candidateData.append(key)
                 for item in self.candidates[key]:
-                    print(item)
+                    # print(item)
                     candidateData.append(item)
                     candidateData.append(self.candidates[key][item])
                 rows.append(candidateData)
