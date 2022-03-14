@@ -3,6 +3,9 @@
 
 This project is an implementation of a secure electronic voting method.
 
+DISCLAIMER: This system is not viable for actual use! 
+It all runs locally on your own machine and is for educational purposes only!
+
 ## Voting Process
 We have two organizations:
 - CLA: Central Legitimization Agency
