@@ -25,4 +25,4 @@ voteMessage = Voter.decrypt_vote_result(voteMessage,CTF.publicKeyRSA())
 
 CTF.saveIDListToFile()
 
-print(voteMessage)
+print(voteMessage.decode())
