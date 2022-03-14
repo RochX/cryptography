@@ -82,6 +82,9 @@ class Voter(encryption_functions.CryptographyProperties):
 class CTF(encryption_functions.CryptographyProperties):
     __ID_FILE_NAME = "variable_files/CTF_IDS.pickle"
 
+    __PICKLE_AES_KEY = b'\x96\x05\xe4\xb9J\xe4\x0b\x15A\'\xa8\x90\x81`\xef\x89\xca\xdd\x0e\xb9\xe2"\xf9G}v\xac\xc5\xf8\x10\x12\x89'
+    __PICKLE_IV = b'\x9b_\xb9\x05\xecT*\xf7\x8el\x0b\xa2|\x04ZS'
+
     def __init__(self, loadIDs=False):
         super().__init__()
 
@@ -89,8 +92,7 @@ class CTF(encryption_functions.CryptographyProperties):
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
 
         if loadIDs:
-            with open(self.__ID_FILE_NAME, 'rb') as id_file:
-                self.ids = pickle.load(id_file)
+            self.ids = encryption_functions.pickle_read_secure(self.__ID_FILE_NAME, self.__PICKLE_AES_KEY, self.__PICKLE_IV)
 
         self.loadTally()
 
@@ -198,14 +200,16 @@ class CTF(encryption_functions.CryptographyProperties):
 
     # saves our id file to an external file to load later
     def saveIDListToFile(self):
-        with open(self.__ID_FILE_NAME, 'wb') as id_file:
-            pickle.dump(self.ids, id_file)
+        encryption_functions.pickle_write_secure(self.ids, self.__ID_FILE_NAME, self.__PICKLE_AES_KEY, self.__PICKLE_IV)
 
 
 # Class meant to represent the CLA and the functions it may need
 class CLA(encryption_functions.CryptographyProperties):
     ID_MESSAGE_PREFIX = b'VOTER_ID_IS'
     INVALID_PERSONAL_INFO_PREFIX = b'INVALID_PERSONAL_INFO'
+
+    __PICKLE_AES_KEY = b'\x03\xa9B\xb7d\xbf\xfd\xb3\xbd\x8c\xdau\xa7\xe6o7\x9c\xb6\xce\xdd\xdd\xc7 \x84\x1f\x99qle\x02\x86\xe3'
+    __PICKLE_IV = b'\xd4@\x11\xb8c\xd3\xb7\xba[\x08e[\x96`*.'
 
     __ID_FILE_NAME = 'variable_files/CLA_IDS.pickle'
     __AUTH_DICT_FILE_NAME = 'variable_files/CLA_AUTH_DICT.pickle'
@@ -218,12 +222,9 @@ class CLA(encryption_functions.CryptographyProperties):
 
         # load variables from pickle files if needed
         if loadIDs:
-            with open(self.__ID_FILE_NAME, 'rb') as id_file:
-                self.ids = pickle.load(id_file)
-
+            self.ids = encryption_functions.pickle_read_secure(self.__ID_FILE_NAME, self.__PICKLE_AES_KEY, self.__PICKLE_IV)
         if loadAuthDict:
-            with open(self.__AUTH_DICT_FILE_NAME, 'rb') as auth_dict_file:
-                self.auth_dict = pickle.load(auth_dict_file)
+            self.auth_dict = encryption_functions.pickle_read_secure(self.__AUTH_DICT_FILE_NAME, self.__PICKLE_AES_KEY, self.__PICKLE_IV)
 
     # Function to "Register" a user. It checks if they are a valid voter and have not registered yet, then generated a key.
     def validate(self, SSN, first, last, raw_output=False):
@@ -342,12 +343,10 @@ class CLA(encryption_functions.CryptographyProperties):
         return encryption_functions.encrypt_and_sign(bytes(id_list_bytearray), self._rsa_private_key, self._aes_key, self.iv)
 
     def saveIDListToFile(self):
-        with open(self.__ID_FILE_NAME, 'wb') as id_file:
-            pickle.dump(self.ids, id_file)
+        encryption_functions.pickle_write_secure(self.ids, self.__ID_FILE_NAME, self.__PICKLE_AES_KEY, self.__PICKLE_IV)
 
     def saveAuthDictToFile(self):
-        with open(self.__AUTH_DICT_FILE_NAME, 'wb') as auth_dict_file:
-            pickle.dump(self.auth_dict, auth_dict_file)
+        encryption_functions.pickle_write_secure(self.auth_dict, self.__AUTH_DICT_FILE_NAME, self.__PICKLE_AES_KEY, self.__PICKLE_IV)
 
 
 if __name__ == '__main__':
