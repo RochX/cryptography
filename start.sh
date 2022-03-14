@@ -1,4 +1,5 @@
 # NEEDS TO BE RUN WITH SUDO ACCESS (to install PM2)
+# run init python
  pip3 install cryptography
  echo 'Node Version:'
  node -v

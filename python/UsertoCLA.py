@@ -23,7 +23,7 @@ try:
 
     # Method to convert decrypted data to proper format
     validationMessage = "Your ID is " + Voter.voter_id
-    import CLAtoCTF
+    #import CLAtoCTF
 except AssertionError:
     validationMessage = "Invalid Personal Info."
 
