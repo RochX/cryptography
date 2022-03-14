@@ -5,6 +5,7 @@ import csv
 import sys
 import os
 import encryption_functions
+import pickle
 # CLA
 # (Dictionary) Database of authorized voters
 # First Name, Last Name, SSN, verification
@@ -79,11 +80,18 @@ class Voter(encryption_functions.CryptographyProperties):
 
 
 class CTF(encryption_functions.CryptographyProperties):
-    def __init__(self):
+    __ID_FILE_NAME = "variable_files/CTF_IDS.pickle"
+
+    def __init__(self, loadIDs=False):
         super().__init__()
 
         self.candidates = {"Captain Blackbeard": {}, "Miss Fortune": {}}
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
+
+        if loadIDs:
+            with open(self.__ID_FILE_NAME, 'rb') as id_file:
+                self.ids = pickle.load(id_file)
+
         self.loadTally()
 
     # TODO fixme: people can still vote multiple times, I tested it and I was able to vote multiple times! -Xavier
@@ -187,7 +195,11 @@ class CTF(encryption_functions.CryptographyProperties):
         id_list = id_list_bytes.decode().split(",")
         for id in id_list[1:]:
             self.ids[int(id)] = True
-        pass
+
+    # saves our id file to an external file to load later
+    def saveIDListToFile(self):
+        with open(self.__ID_FILE_NAME, 'wb') as id_file:
+            pickle.dump(self.ids, id_file)
 
 
 # Class meant to represent the CLA and the functions it may need
@@ -195,11 +207,23 @@ class CLA(encryption_functions.CryptographyProperties):
     ID_MESSAGE_PREFIX = b'VOTER_ID_IS'
     INVALID_PERSONAL_INFO_PREFIX = b'INVALID_PERSONAL_INFO'
 
-    def __init__(self):
+    __ID_FILE_NAME = 'variable_files/CLA_IDS.pickle'
+    __AUTH_DICT_FILE_NAME = 'variable_files/CLA_AUTH_DICT.pickle'
+
+    def __init__(self, loadIDs=False, loadAuthDict=False):
         super().__init__()
         self.auth_dict = {}     # Dictionary of Authorized Voter. This uses their SSN as a key, with an array of their first name, last name and validation number
         self.ids = {}           # Dictionary of validation Ids that have been generated and will be sent to the CTF
         self.loadVoters()       # Intializes data upon start of program.
+
+        # load variables from pickle files if needed
+        if loadIDs:
+            with open(self.__ID_FILE_NAME, 'rb') as id_file:
+                self.ids = pickle.load(id_file)
+
+        if loadAuthDict:
+            with open(self.__AUTH_DICT_FILE_NAME, 'rb') as auth_dict_file:
+                self.auth_dict = pickle.load(auth_dict_file)
 
     # Function to "Register" a user. It checks if they are a valid voter and have not registered yet, then generated a key.
     def validate(self, SSN, first, last, raw_output=False):
@@ -257,8 +281,6 @@ class CLA(encryption_functions.CryptographyProperties):
         # encrypt and sign voter ID and then return it
         return encryption_functions.encrypt_and_sign(voter_id, self._rsa_private_key, self._aes_key, self.iv)
 
-
-
     # Function to load Voter data from the "voter_auth.csv" file
     def loadVoters(self):
         #read csv, and split on "," the line
@@ -312,13 +334,20 @@ class CLA(encryption_functions.CryptographyProperties):
         CTF.ids = self.ids
         return "ID list sent\n"
 
-
     # encrypts the ID list to send to the CTF
     def encryptIDList(self):
         id_list = [str(x) for x in list(self.ids.keys())]
         id_list_bytearray = bytearray("ID_List, " + ", ".join(id_list), encoding='ascii')
 
         return encryption_functions.encrypt_and_sign(bytes(id_list_bytearray), self._rsa_private_key, self._aes_key, self.iv)
+
+    def saveIDListToFile(self):
+        with open(self.__ID_FILE_NAME, 'wb') as id_file:
+            pickle.dump(self.ids, id_file)
+
+    def saveAuthDictToFile(self):
+        with open(self.__AUTH_DICT_FILE_NAME, 'wb') as auth_dict_file:
+            pickle.dump(self.auth_dict, auth_dict_file)
 
 
 if __name__ == '__main__':
@@ -350,6 +379,10 @@ if __name__ == '__main__':
     voter_message = temp_Voter.encrypt_vote()
     encrypted_vote_result = CTF.vote_from_voter_message(voter_message, temp_Voter.publicKeyRSA())
     decrypted_vote_result = temp_Voter.decrypt_vote_result(encrypted_vote_result, CTF.publicKeyRSA())
+
+    CTF.saveIDListToFile()
+    CLA.saveIDListToFile()
+    CLA.saveAuthDictToFile()
 
     print("Welcome to the Virtual Voting Booth!\n")
     running = True

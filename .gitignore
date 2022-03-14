@@ -1,6 +1,7 @@
 cla_backend/node_modules
 ctf_backend/node_modules
 user_backend/node_modules
+!/python/variable_files/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -131,3 +132,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/python/variable_files/CLA_AUTH_DICT.pickle
+/python/variable_files/CLA_IDS.pickle

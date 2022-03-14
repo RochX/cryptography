@@ -1,16 +1,12 @@
 import sys
-import pickle
-import filenames
 import encryption_functions
-from main import CLA, CTF, Voter
+from main import CTF, Voter
 
 #print("Hello world, I'm python code running on the CTF")
 
 Voter = Voter("000000000","This is an object for voting","This is an object for voting (lastname)")
 
-CTFfile = open(filenames.CTF, 'rb')     
-CTF = pickle.load(CTFfile)
-CTFfile.close()
+CTF = CTF(loadIDs=True)
 
 Voter.desired_candidate = sys.argv[1]
 Voter.voter_id = sys.argv[2]
@@ -27,10 +23,6 @@ voteMessage = CTF.vote_from_voter_message(EncryptedVote,Voter.publicKeyRSA())
 
 voteMessage = Voter.decrypt_vote_result(voteMessage,CTF.publicKeyRSA())
 
-CTFPickle = open(filenames.CTF, 'ab')
-
-# source, destination
-pickle.dump(CTF, CTFPickle)
-CTFPickle.close()
+CTF.saveIDListToFile()
 
 print(voteMessage)
