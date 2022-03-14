@@ -108,7 +108,7 @@ class CTF(encryption_functions.CryptographyProperties):
                     self.saveVoteTally(False)
                     return "Congrats! You voted!"
             return "Candidate is not present."
-        elif len(CTF.ids) == 0:
+        elif len(self.ids) == 0:
             return "Voting period has not begun yet.\n"
         else:
             return "You did not register in time.\n"
