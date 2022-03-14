@@ -53,10 +53,10 @@ class Voter(encryption_functions.CryptographyProperties):
         #self.aes_key = os.urandom(32)
         #self.iv = os.urandom(16)
 
-        return encryption_functions.encrypt_and_sign(message, self.rsa_private_key, self.aes_key, self.iv)
+        return encryption_functions.encrypt_and_sign(message, self._rsa_private_key, self._aes_key, self.iv)
 
     def decrypt_voter_id(self, ciphertext, cla_rsa_pub_key):
-        plaintext = encryption_functions.decrypt_and_verify(ciphertext, cla_rsa_pub_key, self.aes_key, self.iv)
+        plaintext = encryption_functions.decrypt_and_verify(ciphertext, cla_rsa_pub_key, self._aes_key, self.iv)
         plaintext = plaintext.split(b', ')
 
         # assert we got an ID back
@@ -72,10 +72,10 @@ class Voter(encryption_functions.CryptographyProperties):
 
         vote = Voter.VOTE_PREFIX + b', ' + b_voter_id + b', ' + b_desired_candidate + b', ' + b_nickname
 
-        return encryption_functions.encrypt_and_sign(vote, self.rsa_private_key, self.aes_key, self.iv)
+        return encryption_functions.encrypt_and_sign(vote, self._rsa_private_key, self._aes_key, self.iv)
 
     def decrypt_vote_result(self, ciphertext, ctf_rsa_pub_key):
-        return encryption_functions.decrypt_and_verify(ciphertext, ctf_rsa_pub_key, self.aes_key, self.iv)
+        return encryption_functions.decrypt_and_verify(ciphertext, ctf_rsa_pub_key, self._aes_key, self.iv)
 
 
 class CTF(encryption_functions.CryptographyProperties):
@@ -104,7 +104,7 @@ class CTF(encryption_functions.CryptographyProperties):
             return "You did not register in time.\n"
 
     def vote_from_voter_message(self, ciphertext, voter_rsa_public_key):
-        plaintext = encryption_functions.decrypt_and_verify(ciphertext, voter_rsa_public_key, self.aes_key, self.iv)
+        plaintext = encryption_functions.decrypt_and_verify(ciphertext, voter_rsa_public_key, self._aes_key, self.iv)
         plaintext_arr = plaintext.split(sep=b', ')
 
         # assume we get a vote message
@@ -119,7 +119,7 @@ class CTF(encryption_functions.CryptographyProperties):
         if type(vote_result) != bytes:
             vote_result = bytes(vote_result, encoding='utf-8')
 
-        return encryption_functions.encrypt_and_sign(vote_result, self.rsa_private_key, self.aes_key, self.iv)
+        return encryption_functions.encrypt_and_sign(vote_result, self._rsa_private_key, self._aes_key, self.iv)
 
     def tally(self):
         print("\nVote Tally\n-----------")
@@ -183,7 +183,7 @@ class CTF(encryption_functions.CryptographyProperties):
 
     # decrypts the ID list and verifies the signature of the message from the CLA.
     def decryptIDList(self, ciphertext, CLA_rsa_public_key):
-        id_list_bytes = encryption_functions.decrypt_and_verify(ciphertext, CLA_rsa_public_key, self.aes_key, self.iv)
+        id_list_bytes = encryption_functions.decrypt_and_verify(ciphertext, CLA_rsa_public_key, self._aes_key, self.iv)
         id_list = id_list_bytes.decode().split(",")
         for id in id_list[1:]:
             self.ids[int(id)] = True
@@ -232,7 +232,7 @@ class CLA(encryption_functions.CryptographyProperties):
     # validate a voter based on a voter message from a Voter object
     def validate_voter(self, voter_message, voter_rsa_pub_key):
         # decrypt, verify signature, and split our message
-        plaintext = encryption_functions.decrypt_and_verify(voter_message, voter_rsa_pub_key, self.aes_key, self.iv)
+        plaintext = encryption_functions.decrypt_and_verify(voter_message, voter_rsa_pub_key, self._aes_key, self.iv)
         voter_info = plaintext.split(sep=b', ')
 
         # assume we actually received a voter personal info message
@@ -255,7 +255,7 @@ class CLA(encryption_functions.CryptographyProperties):
             voter_id = CLA.INVALID_PERSONAL_INFO_PREFIX
 
         # encrypt and sign voter ID and then return it
-        return encryption_functions.encrypt_and_sign(voter_id, self.rsa_private_key, self.aes_key, self.iv)
+        return encryption_functions.encrypt_and_sign(voter_id, self._rsa_private_key, self._aes_key, self.iv)
 
 
 
@@ -318,7 +318,7 @@ class CLA(encryption_functions.CryptographyProperties):
         id_list = [str(x) for x in list(self.ids.keys())]
         id_list_bytearray = bytearray("ID_List, " + ", ".join(id_list), encoding='ascii')
 
-        return encryption_functions.encrypt_and_sign(bytes(id_list_bytearray), self.rsa_private_key, self.aes_key, self.iv)
+        return encryption_functions.encrypt_and_sign(bytes(id_list_bytearray), self._rsa_private_key, self._aes_key, self.iv)
 
 
 if __name__ == '__main__':
