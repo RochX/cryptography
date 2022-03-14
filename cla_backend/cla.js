@@ -31,11 +31,13 @@ app.get('/register', (req, res) => {
     var lastName = req.query.lastName
     var SSN = req.query.SSN
 
-    console.log(firstName)
+    console.log(firstName, lastName, SSN)
  
     var dataToSend;
+
+    process.chdir("../python")
     // spawn new child process to call the python script
-    const python = spawn('python', ['../python/UsertoCLA.py', firstName, lastName, SSN],);
+    const python = spawn('python3', ['UsertoCLA.py', firstName, lastName, SSN]);
     // collect data from script
     python.stdout.on('data', function (data) {
         console.log('Pipe data from python script ...');

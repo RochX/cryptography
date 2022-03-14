@@ -35,15 +35,29 @@ app.get('/register', (req, res) => {
     var dataToSend;
     console.log("register..")
     // spawn new child process to call the python script
-    const python = spawn('python', ['../python/UsertoCLA.py', firstName, lastName, SSN]);
-    // collect data from script
-    python.stdout.on('data', function (data) {
-        console.log('Pipe data from python script ...');
-        dataToSend = data.toString();
-    });
+    process.chdir("../python")
+    // const python = spawn('python3', ['UsertoCLA.py', firstName, lastName, SSN]);
+    // // collect data from script
+    // python.stdout.on('data', function (data) {
+    //     console.log('Pipe data from python script ...');
+    //     dataToSend = data.toString();
+    // });
 
-    //localhost:4000/register/?firstName=1&lastName=2&SSN=3
-    // in close event we are sure that stream from child process is closed
+    // python.on('exit', (code, signal) => {
+    //     if (code) {
+    //         console.error('Child exited with code', code)
+    //     } else if (signal) {
+    //         console.error('Child was killed with signal', signal);
+    //     } else {
+    //         console.log('Child exited okay');
+    //     }
+    // });
+
+    // python.stderr.on('data', (data) => {
+    //     console.log(data.toString());
+    // });
+    
+    // localhost:4000/register/?firstName=1&lastName=2&SSN=3
     python.on('close', (code) => {
         console.log(`child process close all stdio with code ${code}`);
         fetch('http://localhost:4000/register/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
@@ -52,6 +66,7 @@ app.get('/register', (req, res) => {
                 console.log("FETCHING IS SUCCESSFUL" + response.output)
                 //dataToSend = response.output.toString()
                 res.send({output: dataToSend}) 
+ 
         });
     }); 
 })

@@ -231,7 +231,7 @@ class CLA(encryption_functions.CryptographyProperties):
         if SSN in self.auth_dict:
             if self.auth_dict[SSN][0] == first and self.auth_dict[SSN][1] == last:
                 if self.auth_dict[SSN][2] == -1:
-                    random.seed(89)
+                    #random.seed(89)
                     idSearch = True
                     while idSearch is True:
                         id = random.randint(0,3000000)
