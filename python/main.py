@@ -98,7 +98,7 @@ class CTF(encryption_functions.CryptographyProperties):
 
     # TODO fixme: people can still vote multiple times, I tested it and I was able to vote multiple times! -Xavier
     def vote(self,candidate,id,username):
-        if int(id) in CTF.ids:
+        if int(id) in self.ids:
             for key in self.candidates:
                 if str(id) in self.candidates[key].keys():
                     return "You already voted."
