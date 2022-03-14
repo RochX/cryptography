@@ -1,4 +1,5 @@
 import os
+import pickle
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -12,24 +13,25 @@ SEP_BYTES = b';;;'
 class CryptographyProperties:
     def __init__(self):
         # Generate RSA keys
-        self.rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-        self.rsa_public_key = self.rsa_private_key.public_key()
+        self._rsa_private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        self._rsa_public_key = self._rsa_private_key.public_key()
 
-        self.aes_key = b'key_initial'
+        # initial aes keys, these will throw errors if not overwritten
+        self._aes_key = b'key_initial'
         self.iv = b'iv_initial'
 
     # returns public RSA key
     def publicKeyRSA(self):
-        return self.rsa_public_key
+        return self._rsa_public_key
 
     def generate_encrypted_aes_key(self, other_rsa_public_key):
         # generate a new AES key
-        self.aes_key = os.urandom(32)
+        self._aes_key = os.urandom(32)
         #self.aes_key = b'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
         # encrypt the AES key with RSA (using the other's public key)
         encrypted_key = other_rsa_public_key.encrypt(
-            self.aes_key,
+            self._aes_key,
             padding.OAEP(
                 mgf=padding.MGF1(algorithm=hashes.SHA256()),
                 algorithm=hashes.SHA256(),
@@ -38,7 +40,7 @@ class CryptographyProperties:
         )
 
         # sign the encrypted AES key
-        signature = self.rsa_private_key.sign(
+        signature = self._rsa_private_key.sign(
             encrypted_key,
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
@@ -67,7 +69,7 @@ class CryptographyProperties:
         )
 
         # decrypt received ciphertext
-        plaintext = self.rsa_private_key.decrypt(
+        plaintext = self._rsa_private_key.decrypt(
             ciphertext,
             padding.OAEP(
                 mgf=padding.MGF1(algorithm=hashes.SHA256()),
@@ -77,7 +79,7 @@ class CryptographyProperties:
         )
 
         # set AES key
-        self.aes_key = plaintext
+        self._aes_key = plaintext
 
 
 '''
@@ -156,6 +158,41 @@ def decrypt_and_verify(ciphertext, rsa_public_key, aes_key, iv):
     return message
 
 
+def pickle_write_secure(var, filename, aes_key, iv):
+    aes = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
+    encryptor = aes.encryptor()
+
+    pickle_bytes = pickle.dumps(var)
+
+    # pad the message for AES
+    pickle_bytes += PADDING_BYTE * (-len(pickle_bytes) % 16)
+
+    # encrypt our bytes
+    encrypted_bytes = encryptor.update(pickle_bytes)
+
+    # write to file
+    with open(filename, 'wb') as file:
+        file.write(encrypted_bytes)
+
+
+def pickle_read_secure(filename, aes_key, iv):
+    aes = Cipher(algorithms.AES(aes_key), modes.CBC(iv), backend=default_backend())
+    decryptor = aes.decryptor()
+
+    # read encrypted bytes
+    with open(filename, 'rb') as file:
+        encrypted_bytes = file.read()
+
+    # decrypt bytes
+    pickle_bytes = decryptor.update(encrypted_bytes)
+
+    # remove padding bytes from AES
+    pickle_bytes.rstrip(PADDING_BYTE)
+
+    # read variable and return
+    var = pickle.loads(pickle_bytes)
+    return var
+
 # testing function
 if __name__ == '__main__':
     rsa_priv = rsa.generate_private_key(public_exponent=65537, key_size=2048)
@@ -178,26 +215,37 @@ if __name__ == '__main__':
     p2 = CryptographyProperties()
 
     print("Initial")
-    print("p1 aes key: ", p1.aes_key)
-    print("p2 aes key: ", p2.aes_key)
+    print("p1 aes key: ", p1._aes_key)
+    print("p2 aes key: ", p2._aes_key)
     print()
 
     aes_key_exchange_with_rsa(p1, p2)
 
     print("Post Transfer")
-    print("p1 aes key: ", p1.aes_key)
-    print("p2 aes key: ", p2.aes_key)
+    print("p1 aes key: ", p1._aes_key)
+    print("p2 aes key: ", p2._aes_key)
 
     print()
 
     message = b'Shared IV through classes!'
 
     print('iv:', iv)
-    ciphertext = encrypt_and_sign(message, p1.rsa_private_key, p1.aes_key, p1.iv)
+    ciphertext = encrypt_and_sign(message, p1._rsa_private_key, p1._aes_key, p1.iv)
     print('ciphertext:', ciphertext)
 
     print()
 
-    print('message:', decrypt_and_verify(ciphertext, p1.publicKeyRSA(), p2.aes_key, p2.iv))
+    print('message:', decrypt_and_verify(ciphertext, p1.publicKeyRSA(), p2._aes_key, p2.iv))
+
+    dict = {'aaaaaaaaaaa': 1, 'bbbbbbbbbb': 2, 'ccccccccc': 3}
+    aes_key = os.urandom(32)
+    iv = os.urandom(16)
+
+    with open('variable_files/testU.pickle', 'wb') as file:
+        pickle.dump(dict, file)
+
+    pickle_write_secure(dict, 'variable_files/test.pickle', aes_key, iv)
+
+    print(pickle_read_secure('variable_files/test.pickle', aes_key, iv))
 
 

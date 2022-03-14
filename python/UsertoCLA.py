@@ -1,15 +1,12 @@
 import sys
-import pickle
-import python.filenames as filenames
-from python.main import CLA, Voter, CTF
-import python.encryption_functions as encryption_functions
+import encryption_functions
+from main import CLA, Voter
 
 #print("[python] CLA received: " + str(sys.argv[1]) + " " + str(sys.argv[2]) + " " + str(sys.argv[3]))
 
 Voter = Voter(str(sys.argv[1]), str(sys.argv[2]), str(sys.argv[3]))
-CLAfile = open(filenames.CLA, 'rb')     
-CLA = pickle.load(CLAfile)
-CLAfile.close()
+
+CLA = CLA(loadIDs=True)
 
 # Setup key exchange
 encryption_functions.aes_key_exchange_with_rsa(CLA,Voter)
@@ -28,12 +25,8 @@ try:
     validationMessage = "Your ID is " + Voter.voter_id
     import CLAtoCTF
 except AssertionError:
-    validationMessage ="Invalid Personal Info."
+    validationMessage = "Invalid Personal Info."
 
-CLAPickle = open(filenames.CLA, 'wb')
-
-# source, destination
-pickle.dump(db, CLAPickle)                     
-CLAPickle.close()
+CLA.saveIDListToFile()
 
 print(validationMessage)

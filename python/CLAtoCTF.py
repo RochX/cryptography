@@ -1,30 +1,15 @@
 import sys
-import pickle
-import python.filenames as filenames
-from python.main import CLA, Voter, CTF
-import python.encryption_functions as encryption_functions
+import encryption_functions
+from main import CLA, CTF
 
 # print("Hello world, I'm python code running on the CLA")
 
-CLAfile = open(filenames.CLA, 'rb')     
-CLA = pickle.load(CLAfile)
-CLAfile.close()
-CTFfile = open(filenames.CTF, 'rb')     
-CTF = pickle.load(CTFfile)
-CTFfile.close()
+CLA = CLA(loadIDs=True)
+CTF = CTF(loadIDs=True)
 
 encryption_functions.aes_key_exchange_with_rsa(CLA, CTF)
 encrypted_ID_list = CLA.encryptIDList()
 CTF.decryptIDList(encrypted_ID_list, CLA.publicKeyRSA())
 
-CLAPickle = open(filenames.CLA, 'wb')
-
-# source, destination
-pickle.dump(db, CLAPickle)                     
-CLAPickle.close()
-
-CTFPickle = open(filenames.CTF, 'wb')
-
-# source, destination
-pickle.dump(db, CTFPickle)                     
-CTFPickle.close()
+CLA.saveIDListToFile()
+CTF.saveIDListToFile()

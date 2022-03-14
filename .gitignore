@@ -1,6 +1,7 @@
 cla_backend/node_modules
 ctf_backend/node_modules
 user_backend/node_modules
+!/python/variable_files/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
