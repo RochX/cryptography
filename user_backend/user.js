@@ -35,30 +35,25 @@ app.get('/register', (req, res) => {
     var dataToSend;
     console.log("register..")
     // spawn new child process to call the python script
-    const python = spawn('python', ['../python/testUser.py', firstName, lastName, SSN]);
+    const python = spawn('python', ['../python/UsertoCLA.py', firstName, lastName, SSN]);
     // collect data from script
     python.stdout.on('data', function (data) {
         console.log('Pipe data from python script ...');
         dataToSend = data.toString();
     });
 
+    //localhost:4000/register/?firstName=1&lastName=2&SSN=3
     // in close event we are sure that stream from child process is closed
     python.on('close', (code) => {
         console.log(`child process close all stdio with code ${code}`);
-        fetch('http://localhost:4000/test/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
+        fetch('http://localhost:4000/register/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
         .then(response => response.json())
             .then((response) => {
                 console.log("FETCHING IS SUCCESSFUL" + response.output)
-                dataToSend = response.output.toString()
+                //dataToSend = response.output.toString()
                 res.send({output: dataToSend}) 
         });
-    });
-
-
-
-
-
-      
+    }); 
 })
 
 app.listen(port, () => console.log(`CTF: Example app listening on port ${port}!`))
