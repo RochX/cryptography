@@ -44,12 +44,43 @@ app.get('/register', (req, res) => {
         dataToSend = data.toString();
     });
 
+    python.on('exit', (code, signal) => {
+        if (code) {
+            console.error('Child exited with code', code)
+        } else if (signal) {
+            console.error('Child was killed with signal', signal);
+        } else {
+            console.log('Child exited okay');
+        }
+    });
+
+    python.stderr.on('data', (data) => {
+        console.log(data.toString());
+    });
+
     // in close event we are sure that stream from child process is closed
     python.on('close', (code) => {
     console.log(`child process close all stdio with code ${code}`);
     // send data to browser
-    res.send({output: dataToSend})
+        CLAtoCTF()
+        res.send({output: dataToSend})
     });
 })
+
+function CLAtoCTF(){
+    process.chdir("../python")
+    // spawn new child process to call the python script
+    const python = spawn('python3', ['CLAtoCTF.py']);
+
+    python.on('exit', (code, signal) => {
+        if (code) {
+            console.error('CLAtoCTF exited with code', code)
+        } else if (signal) {
+            console.error('CLAtoCTF was killed with signal', signal);
+        } else {
+            console.log('CLAtoCTF exited okay');
+        }
+    });
+}
 
 app.listen(port, () => console.log(`CLA: Example app listening on port ${port}!`))

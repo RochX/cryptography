@@ -21,17 +21,22 @@ function App() {
 
    async function handleRegisterButton(){
      if (firstName !== "" && lastName !== "" && SSN !== ""){
-      fetch('http://localhost:3500/register/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
+      fetch('http://localhost:4000/register/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
         .then(response => response.json())
         .then((response) => {
            setCard1Message(response.output);
          })
      } 
-
    }
 
    function handleVoteButton(){
-
+    if (id !== "" && nickname !== ""  && selectedOption !== ""){
+      fetch('http://localhost:4500/vote/?id=' + id + '&nickname=' + nickname + '&selectedOption=' + selectedOption)
+        .then(response => response.json())
+        .then((response) => {
+           alert(response.output);
+         })
+     } 
    }
 
    function selectButton(number: number){
@@ -74,6 +79,7 @@ function App() {
           setVoted(true);
            break;
        }
+       handleVoteButton();
      } else {
        if (id === "" && nickname === ""){
          setCard2Message("Please provide your ID and a nickname first");
@@ -126,7 +132,7 @@ function App() {
                <div className='Card-Vote-MainFlex-Left'>
                 <button 
                   disabled = {voted}
-                  onClick={() => selectButton(1)}
+                  onClick={() => selectButton(1) }
                   className={button1Selected ? "Card-Vote-MainFlex-SelectedButton" : "" }
                 >
                   Option A

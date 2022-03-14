@@ -43,19 +43,19 @@ app.get('/register', (req, res) => {
     //     dataToSend = data.toString();
     // });
 
-    // python.on('exit', (code, signal) => {
-    //     if (code) {
-    //         console.error('Child exited with code', code)
-    //     } else if (signal) {
-    //         console.error('Child was killed with signal', signal);
-    //     } else {
-    //         console.log('Child exited okay');
-    //     }
-    // });
+    python.on('exit', (code, signal) => {
+        if (code) {
+            console.error('Child exited with code', code)
+        } else if (signal) {
+            console.error('Child was killed with signal', signal);
+        } else {
+            console.log('Child exited okay');
+        }
+    });
 
-    // python.stderr.on('data', (data) => {
-    //     console.log(data.toString());
-    // });
+    python.stderr.on('data', (data) => {
+        console.log(data.toString());
+    });
     
     // localhost:4000/register/?firstName=1&lastName=2&SSN=3
     python.on('close', (code) => {
