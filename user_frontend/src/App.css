@@ -92,7 +92,7 @@
 }
 .Card > button{
   margin-top: auto;
-  margin-bottom: calc(5px + 20px);
+  margin-bottom: calc(5px + 10px);
   color: var(--white);
   background-color: var(--light-blue);
   border-radius: 16px;
@@ -121,7 +121,7 @@
   align-items: center;
   width: 100%;
   margin-top: auto;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 .Card-Vote-MainFlex-Left{
   display: flex;
@@ -182,6 +182,5 @@
   color: var(--selected);
 }
 .Card-MessageButton{
-  width: fit-content !important;
   background-color: var(--selected) !important;
 }

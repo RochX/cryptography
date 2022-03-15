@@ -9,10 +9,12 @@ function App() {
   const [button3Selected, setButton3] = React.useState(false);
   const [button4Selected, setButton4] = React.useState(false);
   const [voted, setVoted] = React.useState(false);
+  const [registered, setRegistered] = React.useState(false);
+
   var firstName = "";
    var lastName = "";
    var SSN = "";
-   var id = "";
+   var [id, setId] = React.useState<number>();
    var nickname = "";
    var selectedOption = "";
 
@@ -24,73 +26,101 @@ function App() {
       fetch('http://localhost:4000/register/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
         .then(response => response.json())
         .then((response) => {
-           setCard1Message(response.output);
+            if (response.output == "Invalid Personal Info.\n"){
+              setCard1Message("Invalid personal infromation");
+              setRegistered(false);
+            } else {
+              setCard1Message(response.output);
+              setRegistered(true);
+            }
          })
      } 
    }
 
-   function handleVoteButton(){
-    if (id !== "" && nickname !== ""  && selectedOption !== ""){
+   function handleVoteButton(number: number) {
+    switch(number){
+      case 1:
+        selectedOption = "A";
+        break;
+      case 2:
+        selectedOption = "B";
+        break;
+      case 3:
+        selectedOption = "C";
+        break;
+      case 4:
+        selectedOption = "D";
+        break;
+    }
+    if (id || 0 > 0 && nickname !== ""  && selectedOption !== ""){
       fetch('http://localhost:4500/vote/?id=' + id + '&nickname=' + nickname + '&selectedOption=' + selectedOption)
         .then(response => response.json())
         .then((response) => {
-           alert(response.output);
+          alert(response.output);
+          if (response.output == "You did not register in time.\n\n"){
+            setCard2Message("The provide ID is not valid");
+          }
+          else if(response.output == "You already voted.\n"){
+            setCard2Message("You have already voted");
+          } else {
+            switch(number){
+              case 1:
+                setButton1(!button1Selected);
+                setButton2(false);
+                setButton3(false);
+                setButton4(false);
+                setCard2Message("Successfully voted for option A");
+                setVoted(true);
+                break;
+              case 2:
+                setButton2(!button2Selected);
+                setButton1(false);
+                setButton3(false);
+                setButton4(false);
+                setCard2Message("Successfully voted for option B");
+                setVoted(true);
+                break;
+              case 3:
+                setButton3(!button3Selected);
+                setButton1(false);
+                setButton2(false);
+                setButton4(false);
+                setCard2Message("Successfully voted for option C");
+                setVoted(true);
+                break;
+              case 4:
+                setButton4(!button4Selected);
+                setButton1(false);
+                setButton2(false);
+                setButton3(false);
+                setCard2Message("Successfully voted for option D");
+                setVoted(true);
+                break;
+              }
+          }
          })
      } 
    }
 
    function selectButton(number: number){
-     if ( id !== ""  && nickname !== ""){
-       switch(number){
-         case 1:
-           setButton1(!button1Selected);
-          setButton2(false);
-          setButton3(false);
-          setButton4(false);
-          selectedOption = "A";
-          setCard2Message("Successfully voted for option A");
-          setVoted(true);
-          break;
-        case 2:
-          setButton2(!button2Selected);
-          setButton1(false);
-          setButton3(false);
-          setButton4(false);
-          selectedOption = "B";
-          setCard2Message("Successfully voted for option B");
-          setVoted(true);
-          break;
-        case 3:
-          setButton3(!button3Selected);
-          setButton1(false);
-          setButton2(false);
-          setButton4(false);
-          selectedOption = "C";
-          setCard2Message("Successfully voted for option C");
-          setVoted(true);
-          break;
-        case 4:
-          setButton4(!button4Selected);
-          setButton1(false);
-          setButton2(false);
-          setButton3(false);
-          selectedOption = "D";
-          setCard2Message("Successfully voted for option D");
-          setVoted(true);
-           break;
-       }
-       handleVoteButton();
+     if ( id || 0 > 0 && nickname !== ""){
+      handleVoteButton(number)
      } else {
-       if (id === "" && nickname === ""){
+       if (id || 0 > 0 && nickname === ""){
          setCard2Message("Please provide your ID and a nickname first");
        }
-       else if (id === ""){
+       else if (id || 0  > 0 ){
          setCard2Message("Please provide your ID first");
        } else if (nickname === ""){
          setCard2Message("Please provide an anonymous nickname first");
        }
      }
    }
+
+  function keepNumbersOnly(e: React.ChangeEvent<HTMLInputElement>){
+    const value = e.target.value.replace(/\D/g, "");
+    setId(Number(value));
+  }
 
   return (
     <div className="App">
@@ -114,18 +144,20 @@ function App() {
             <input type="text" placeholder='first name' onChange={(e) => firstName = e.target.value}></input>
             <input type="text" placeholder='last name' onChange={(e) => lastName = e.target.value}></input>
             <input type="password" placeholder='SSN' onChange={(e) => SSN = e.target.value}></input>
+            <p className={registered ? "Success" : "Error"}>{card1Message}</p>
             <button 
               onClick={handleRegisterButton}
-              className={card1Message === "" ? "" : "Card-MessageButton"}
+              disabled={registered}
+              className={registered === false ? "" : "Card-MessageButton"}
             >
-              {card1Message === "" ? "GET ID" : card1Message}
+              GET ID
             </button>
           </div>
           <div className='Card' id='thirdCard'>
             <h2>
                2. Vote
              </h2>
-             <input disabled = {voted} type="text"  placeholder='your ID' onChange={(e) => id = e.target.value}></input>
+             <input disabled = {voted} type="text"  placeholder='your ID' onChange={(e) => keepNumbersOnly(e)} value={id !== 0 ? id : ""}></input>
              <input disabled = {voted} type="text"  placeholder='anonymous nickname' onChange={(e) => nickname = e.target.value}></input>
              <p className={voted ? "Success" : "Error"}>{card2Message}</p>
              <div className='Card-Vote-MainFlex'>
