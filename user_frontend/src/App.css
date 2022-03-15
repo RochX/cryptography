@@ -156,15 +156,15 @@
   background-color: var(--selected) !important;
 }
 
- .Card > p {
-   font-family: Montserrat;
-   font-size: 14px;
-   font-style: normal;
-   font-weight: 600;
-   line-height: 20px;
-   letter-spacing: 0em;
-   text-align: left; 
-   width: 100%;
+.Card > p {
+  font-family: Montserrat;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0em;
+  text-align: left; 
+  width: 100%;
   padding-left: 50px;
   color: var(--error)
 }

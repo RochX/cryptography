@@ -3,6 +3,8 @@ import React from 'react';
 
 import { usePapaParse } from 'react-papaparse';
 
+import './CSVParser.css'
+
 export default function ReadRemoteFile() {
   const { readRemoteFile } = usePapaParse();
 
@@ -18,10 +20,10 @@ export default function ReadRemoteFile() {
         console.log("Candidate C: " + evenElements(results.data[2]))
         console.log("Candidate D: " + evenElements(results.data[3]))
         console.log('---------------------------');
-        var A = evenElements(results.data[0])
-        var B = evenElements(results.data[1])
-        var C = evenElements(results.data[2])
-        var D = evenElements(results.data[3])
+        var A = arrayToString(evenElements(results.data[0]))
+        var B = arrayToString(evenElements(results.data[1]))
+        var C = arrayToString(evenElements(results.data[2]))
+        var D = arrayToString(evenElements(results.data[3]))
         var arr = [A, B, C, D]
         setData(arr);
       },
@@ -29,11 +31,11 @@ export default function ReadRemoteFile() {
   };
 
   return (
-    <div>
-      <div>Candidate A: {data[0]}</div>
-      <div>Candidate B: {data[1]}</div>
-      <div>Candidate C: {data[2]}</div>
-      <div>Candidate D: {data[3]}</div>
+    <div className='ListContainer'>
+      <div className='List'><span>Candidate A:  </span>{data[0]} </div>
+      <div className='List'><span>Candidate B:  </span>{data[1]}</div>
+      <div className='List'><span>Candidate C:  </span>{data[2]}</div>
+      <div className='List'><span>Candidate D:  </span> {data[3]}</div>
       <button onClick={() => handleReadRemoteFile()}>Get Current Results</button>
     </div>
   );
@@ -44,4 +46,13 @@ function evenElements(arr) {
   arr = arr.filter((element, index) => index % 2 === 0); //filter out even elements
   arr.shift(); //remove the first element
   return arr
+}
+
+//function to convert array to string with commas
+function arrayToString(arr) {
+  var str = '';
+  for (var i = 0; i < arr.length; i++) {
+    str += arr[i] + ', ';
+  }
+  return str.substring(0, str.length - 2);
 }

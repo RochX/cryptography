@@ -44,6 +44,7 @@ pm2 start node ctf.js
 echo '----------------------------------------'
 echo 'USER_FRONTEND:'
 cd ../user_frontend
+npm install
 pm2 start npm --name "frontend" -- run start
 echo '----------------------------------------'
 echo 'CLA_backend: http://localhost:4000/'

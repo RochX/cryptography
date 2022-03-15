@@ -1,0 +1,61 @@
+.ListContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.List {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 418px;
+    overflow: scroll;
+    text-align: left;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 10px;
+}
+
+button {
+    margin-top: auto;
+    margin-bottom: calc(5px + 10px);
+    color: var(--white);
+    background-color: var(--light-blue);
+    border-radius: 16px;
+    height: 40px;
+    border-style: none;
+    width: 189px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: center;  
+}
+
+.List > span{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 428px;
+    text-align: left;
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 10px;
+}
