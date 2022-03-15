@@ -50,10 +50,6 @@ class Voter(encryption_functions.CryptographyProperties):
 
         message = Voter.PERSONAL_INFO_PREFIX + b', ' + b_ssn + b', ' + b_first_name + b', ' + b_last_name
 
-        # TODO remove temporary assignment of AES key and IV!
-        #self.aes_key = os.urandom(32)
-        #self.iv = os.urandom(16)
-
         return encryption_functions.encrypt_and_sign(message, self._rsa_private_key, self._aes_key, self.iv)
 
     def decrypt_voter_id(self, ciphertext, cla_rsa_pub_key):
@@ -88,7 +84,7 @@ class CTF(encryption_functions.CryptographyProperties):
     def __init__(self, loadIDs=False):
         super().__init__()
 
-        self.candidates = {"Captain Blackbeard": {}, "Miss Fortune": {}}
+        self.candidates = {}
         self.ids = {}                                           # Dictionary of validation Ids that have been generated and sent fron CLA
 
         if loadIDs:
@@ -96,7 +92,6 @@ class CTF(encryption_functions.CryptographyProperties):
 
         self.loadTally()
 
-    # TODO fixme: people can still vote multiple times, I tested it and I was able to vote multiple times! -Xavier
     def vote(self,candidate,id,username):
         if int(id) in self.ids:
             for key in self.candidates:
@@ -168,8 +163,10 @@ class CTF(encryption_functions.CryptographyProperties):
         rows = []
 
         if reset:
-            rows.append(['Captain Blackbeard'])
-            rows.append(['Miss Fortune'])
+            rows.append(['A'])
+            rows.append(['B'])
+            rows.append(['C'])
+            rows.append(['D'])
         else:
             for key in self.candidates:
                 candidateData = []
