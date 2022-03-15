@@ -56,7 +56,6 @@ function App() {
       fetch('http://localhost:4500/vote/?id=' + id + '&nickname=' + nickname + '&selectedOption=' + selectedOption)
         .then(response => response.json())
         .then((response) => {
-          alert(response.output);
           if (response.output == "You did not register in time.\n\n"){
             setCard2Message("The provide ID is not valid");
           }
