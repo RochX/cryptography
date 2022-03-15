@@ -6,7 +6,64 @@ This project is an implementation of a secure electronic voting method.
 DISCLAIMER: This system is not viable for actual use! 
 It all runs locally on your own machine and is for educational purposes only!
 
+## Contents
+- [Running The Project](#running-the-project)
+- [Voting Process](#voting-process)
+
+
+## Running The Project
+You will need to install Node.js to run this project.
+Go [here](https://nodejs.org/en/download/) to install Node.js for your system.
+What to do next depends on your operating system.
+
+### Unix Systems (MacOS and Linux)
+Just run the `start.sh` file with `sudo` permissions.
+
+The application will open in your default web browser.
+
+### Windows Systems
+First we need to install python dependencies for cryptography.
+Run the following:
+- `pip install crpytography`
+
+Now we need download dependencies for Node.js.
+
+Open command prompt in the project root directory.
+Run the following commands:
+
+```
+cd cla_backend
+npm install
+cd ..\ctf_backend
+npm install
+```
+
+#### Starting CLA
+Open a new terminal in the project root and run the following:
+```
+cd cla_backend
+node cla.js
+```
+
+#### Starting CTF
+Open a new terminal in the project root and run the following:
+```
+cd ctf_backend
+node ctf.js
+```
+
+#### Starting Application Page
+Open a new terminal in the project root and run the following:
+```
+cd user_frontend
+npm run start
+```
+
+This should then automatically open a webpage in your default browser.
+
 ## Voting Process
+The following describes the overall process on how the voting system works.
+
 We have two organizations:
 - CLA: Central Legitimization Agency
 - CTF: Central Tabulating Facility
