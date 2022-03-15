@@ -38,6 +38,12 @@ cd ..\ctf_backend
 npm install
 ```
 
+#### Initialization
+First we need to run a particular python file to set up the CLA and CTF:
+```
+python python/init_orgs.py
+```
+
 #### Starting CLA
 Open a new terminal in the project root and run the following:
 ```
