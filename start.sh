@@ -28,12 +28,16 @@ echo 'cryptography (python package for the encryption)'
 echo 'https://pypi.org/project/cryptography/'
 pip3 install cryptography
 echo '----------------------------------------'
+echo 'INITIALIZING:'
+cd python
+python3 init_orgs.py
+echo '----------------------------------------'
 echo 'Stopping all running processes... (if any)'
 pm2 stop all
 pm2 delete all
 echo '----------------------------------------'
 echo 'CLA_BACKEND:'
-cd cla_backend
+cd ../cla_backend
 npm install
 pm2 start node cla.js
 echo '----------------------------------------'

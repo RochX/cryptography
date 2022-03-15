@@ -12,12 +12,12 @@ function App() {
   const [voted, setVoted] = React.useState(false);
   const [registered, setRegistered] = React.useState(false);
 
-  var firstName = "";
-   var lastName = "";
-   var SSN = "";
-   var [id, setId] = React.useState<number>();
-   var nickname = "";
-   var selectedOption = "";
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setLastName] = React.useState('');
+  const [SSN, setSSN] = React.useState('');
+  var [id, setId] = React.useState<number>();
+  const [nickname, setNickname] = React.useState('');
+  var selectedOption = "";
 
    const [card1Message, setCard1Message] = React.useState("");
    const [card2Message, setCard2Message] = React.useState("");
@@ -27,7 +27,7 @@ function App() {
       fetch('http://localhost:4000/register/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
         .then(response => response.json())
         .then((response) => {
-            if (response.output == "Invalid Personal Info.\n"){
+            if (response.output.trim() == "Invalid Personal Info." ){
               setCard1Message("Invalid personal infromation");
               setRegistered(false);
             } else {
@@ -57,10 +57,10 @@ function App() {
       fetch('http://localhost:4500/vote/?id=' + id + '&nickname=' + nickname + '&selectedOption=' + selectedOption)
         .then(response => response.json())
         .then((response) => {
-          if (response.output == "You did not register in time.\n\n"){
+          if (response.output.trim() == "You did not register in time."){
             setCard2Message("The provide ID is not valid");
           }
-          else if(response.output == "You already voted.\n"){
+          else if(response.output.trim() == "You already voted."){
             setCard2Message("You have already voted");
           } else {
             switch(number){
@@ -141,9 +141,9 @@ function App() {
             <h2>
               1. Register
             </h2>
-            <input type="text" placeholder='first name' onChange={(e) => firstName = e.target.value}></input>
-            <input type="text" placeholder='last name' onChange={(e) => lastName = e.target.value}></input>
-            <input type="password" placeholder='SSN' onChange={(e) => SSN = e.target.value}></input>
+            <input type="text" placeholder='first name' onChange={(e) => setFirstName(e.target.value)}></input>
+            <input type="text" placeholder='last name' onChange={(e) => setLastName(e.target.value)}></input>
+            <input type="password" placeholder='SSN' onChange={(e) => setSSN(e.target.value)}></input>
             <p className={registered ? "Success" : "Error"}>{card1Message}</p>
             <button 
               onClick={handleRegisterButton}
@@ -158,7 +158,7 @@ function App() {
                2. Vote
              </h2>
              <input disabled = {voted} type="text"  placeholder='your ID' onChange={(e) => keepNumbersOnly(e)} value={id !== 0 ? id : ""}></input>
-             <input disabled = {voted} type="text"  placeholder='anonymous nickname' onChange={(e) => nickname = e.target.value}></input>
+             <input disabled = {voted} type="text"  placeholder='anonymous nickname' onChange={(e) => setNickname(e.target.value)}></input>
              <p className={voted ? "Success" : "Error"}>{card2Message}</p>
              <div className='Card-Vote-MainFlex'>
                <div className='Card-Vote-MainFlex-Left'>
