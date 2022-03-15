@@ -68,7 +68,18 @@ app.get('/register', (req, res) => {
 function CLAtoCTF(){
     process.chdir("../python")
     // spawn new child process to call the python script
-    const python = spawn('python3', ['CLAtoCTF.py']);
+
+    var pythonVersion = ""
+
+    if (os.platform() == "win32") {
+        console.log("Windows")
+        pythonVersion = "python"
+    } else {
+        console.log("Not Windows")
+        pythonVersion = "python3"
+    }
+
+    const python = spawn(pythonVersion, ['CLAtoCTF.py']);
 
     python.on('exit', (code, signal) => {
         if (code) {
