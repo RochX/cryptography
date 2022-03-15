@@ -51,4 +51,10 @@ app.get('/vote', (req, res) => {
     });
 })
 
+app.get('/csv', (req, res) => {
+    process.chdir("../python")
+    let filePath = "tally.csv";
+    res.download(filePath);
+})
+
 app.listen(port, () => console.log(`CTF: Example app listening on port ${port}!`))

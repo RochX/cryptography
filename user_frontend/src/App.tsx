@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Parser from './CSVParser';
 
 function App() {
 
@@ -120,7 +121,6 @@ function App() {
     const value = e.target.value.replace(/\D/g, "");
     setId(Number(value));
   }
-
   return (
     <div className="App">
       <div className="MainFlex">
@@ -133,6 +133,7 @@ function App() {
             <h2>
               3. See Results
             </h2>
+            {Parser()}
           </div>
         </div>
         <div className="MainFlex-Right">
