@@ -17,7 +17,7 @@ function App() {
   const [SSN, setSSN] = React.useState('');
   var [id, setId] = React.useState<number>();
   const [nickname, setNickname] = React.useState('');
-  const [selectedOption, setSelectedOption] = React.useState('');
+  var selectedOption = "";
 
    const [card1Message, setCard1Message] = React.useState("");
    const [card2Message, setCard2Message] = React.useState("");
@@ -27,7 +27,7 @@ function App() {
       fetch('http://localhost:4000/register/?firstName=' + firstName + '&lastName=' + lastName + '&SSN=' + SSN)
         .then(response => response.json())
         .then((response) => {
-            if (response.output == "Invalid Personal Info.\n"){
+            if (response.output.trim() == "Invalid Personal Info." ){
               setCard1Message("Invalid personal infromation");
               setRegistered(false);
             } else {
@@ -41,26 +41,26 @@ function App() {
    function handleVoteButton(number: number) {
     switch(number){
       case 1:
-        setSelectedOption("A");
+        selectedOption = "A";
         break;
       case 2:
-        setSelectedOption("B");
+        selectedOption = "B";
         break;
       case 3:
-        setSelectedOption("C");
+        selectedOption = "C";
         break;
       case 4:
-        setSelectedOption("D");
+        selectedOption = "D";
         break;
     }
     if (id || 0 > 0 && nickname !== ""  && selectedOption !== ""){
       fetch('http://localhost:4500/vote/?id=' + id + '&nickname=' + nickname + '&selectedOption=' + selectedOption)
         .then(response => response.json())
         .then((response) => {
-          if (response.output == "You did not register in time.\n\n"){
+          if (response.output.trim() == "You did not register in time."){
             setCard2Message("The provide ID is not valid");
           }
-          else if(response.output == "You already voted.\n"){
+          else if(response.output.trim() == "You already voted."){
             setCard2Message("You have already voted");
           } else {
             switch(number){
