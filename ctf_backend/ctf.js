@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const {spawn} = require('child_process');
+const os = require('os');
 const app = express();
 app.use(cors());
 
@@ -22,7 +23,19 @@ app.get('/vote', (req, res) => {
 
     process.chdir("../python")
     // spawn new child process to call the python script
-    const python = spawn('python3', ['UsertoCTF.py', selectedOption, id, nickname]);
+
+    var pythonVersion = ""
+
+    if (os.platform() == "win32") {
+        console.log("Windows")
+        pythonVersion = "python"
+    } else {
+        console.log("Not Windows")
+        pythonVersion = "python3"
+    }
+
+    const python = spawn(pythonVersion, ['UsertoCTF.py', selectedOption, id, nickname]);
+
     // collect data from script
     python.stdout.on('data', function (data) {
         console.log('Pipe data from python script ...');
