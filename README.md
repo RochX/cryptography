@@ -17,7 +17,7 @@ Go [here](https://nodejs.org/en/download/) to install Node.js for your system.
 What to do next depends on your operating system.
 
 ### Unix Systems (MacOS and Linux)
-Just run the `start.sh` file with `sudo` permissions.
+Just run the `start.sh` file with `sudo` permissions by running `sudo sh start.sh` in terminal.
 
 The application will open in your default web browser.
 
