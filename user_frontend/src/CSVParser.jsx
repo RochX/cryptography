@@ -50,9 +50,18 @@ function evenElements(arr) {
 
 //function to convert array to string with commas
 function arrayToString(arr) {
-  var str = '';
+  var str = "";
+  if (arr.length == 0) {
+    str = "(0)";
+  } else {
+    str = "(" + arr.length + ") ";
+  }
   for (var i = 0; i < arr.length; i++) {
     str += arr[i] + ', ';
+  } 
+  if (arr.length == 0) {
+    return str;
+  } else {
+    return str.substring(0, str.length - 2);
   }
-  return str.substring(0, str.length - 2);
 }
