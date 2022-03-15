@@ -41,7 +41,8 @@ npm install
 #### Initialization
 First we need to run a particular python file to set up the CLA and CTF:
 ```
-python python/init_orgs.py
+cd python
+python init_orgs.py
 ```
 
 #### Starting CLA
