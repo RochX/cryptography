@@ -1,5 +1,5 @@
 # Cryptography Final Project: Virtual Election Booth
-**Authors:** *Ronan Wolfe, Aleksandr Molchaign, Xavier Silva*
+**Authors:** *Ronan Wolfe, Aleksandr Molchagin, Xavier Silva*
 
 This project is an implementation of a secure electronic voting method.
 
